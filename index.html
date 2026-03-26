@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Tidsmaskinen Pro - Fast Mode</title>
+    <title>Tidsmaskinen Pro - Final Touch</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
 
@@ -76,9 +76,25 @@
             background: var(--bg); display: flex; flex-direction: column;
             justify-content: center; align-items: center; padding: 20px;
         }
+        
+        /* Felles stil for store knapper i menyer */
+        .big-btn { 
+            width: 100%; 
+            padding: 20px; 
+            border-radius: 15px; 
+            border: none; 
+            font-size: 1.3rem; 
+            font-weight: 800; 
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .big-btn:active { transform: scale(0.98); }
+        
+        .btn-primary { background: var(--accent); color: #fff; margin-top: 15px; }
+        .btn-secondary { background: #1e293b; color: #94a3b8; border: 2px solid #334155; margin-top: 10px; }
+
         .opt-btn { background: #1e293b; border: 2px solid transparent; padding: 10px; border-radius: 10px; color: #94a3b8; font-weight: 700; font-size: 0.8rem; width: 100%; }
         .opt-btn.active { border-color: var(--primary); color: #fff; background: rgba(56, 189, 248, 0.1); }
-        .start-btn { width: 100%; padding: 20px; border-radius: 15px; border: none; background: var(--accent); color: #fff; font-size: 1.3rem; font-weight: 800; margin-top: 15px; }
 
         .hidden { display: none !important; }
         .shake { animation: shake 0.3s; }
@@ -90,7 +106,7 @@
 <div id="game-container">
     <div id="main-menu">
         <h1 style="font-size: 2.2rem; margin: 0;">Tidsmaskinen</h1>
-        <p style="color: #64748b; font-size: 0.8rem; margin-bottom: 20px;">150+ Verb • Ultra Fast</p>
+        <p style="color: #64748b; font-size: 0.8rem; margin-bottom: 20px;">150+ Verb • Perfekt Layout</p>
         <div style="width:100%; text-align:left; font-size:0.7rem; font-weight:800; color:var(--primary); margin-bottom:5px;">FART</div>
         <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; width:100%; margin-bottom:15px;">
             <button class="opt-btn active" onclick="selectOpt(this, 'speed', 'rolig')">Rolig</button>
@@ -105,11 +121,11 @@
             <button class="opt-btn" onclick="selectOpt(this, 'tense', 'skal')">Fremtid</button>
             <button class="opt-btn" onclick="selectOpt(this, 'tense', 'miks')" style="grid-column: span 2;">Miks Alle</button>
         </div>
-        <button class="start-btn" onclick="startGame()">START</button>
+        <button class="big-btn btn-primary" onclick="startGame()">START</button>
     </div>
 
     <div id="play-header" class="game-header hidden">
-        <div onclick="location.reload()" style="color: var(--primary); font-weight: 800; cursor:pointer;">MENY</div>
+        <div onclick="goToMenu()" style="color: var(--primary); font-weight: 800; cursor:pointer;">AVSLUTT</div>
         <div class="stats-container">
             <span>LIV: <span id="lives" style="color:#fff">3</span></span>
             <span>POENG: <span id="score" style="color:#fff">0</span></span>
@@ -143,14 +159,14 @@
     </div>
 
     <div id="modal-overlay" class="hidden">
-        <h2 style="font-size: 2.2rem;">Ferdig!</h2>
+        <h2 style="font-size: 2.2rem; margin-bottom: 0;">Ferdig!</h2>
         <div style="font-size: 5rem; font-weight: 800; color:var(--primary);" id="final-score">0</div>
-        <button class="start-btn" onclick="startGame()">Spill igjen</button>
+        <button class="big-btn btn-primary" onclick="startGame()">Spill igjen</button>
+        <button class="big-btn btn-secondary" onclick="goToMenu()">Hovedmeny</button>
     </div>
 </div>
 
 <script>
-    // Liste over verb (behold alle 150 her)
     const VERBS = [
         {inf:'å ta', presens:'tar', preteritum:'tok', perfektum:'tatt', skal:'skal ta'},
         {inf:'å se', presens:'ser', preteritum:'så', perfektum:'sett', skal:'skal se'},
@@ -158,7 +174,7 @@
         {inf:'å vite', presens:'vet', preteritum:'visste', perfektum:'visst', skal:'skal vite'},
         {inf:'å være', presens:'er', preteritum:'var', perfektum:'vært', skal:'skal være'},
         {inf:'å ha', presens:'har', preteritum:'hadde', perfektum:'hatt', skal:'skal ha'}
-        // ... legg til resten ...
+        // ... (Legg til resten av verbene her)
     ];
 
     let score = 0, lives = 3, selectedSpeed = 'rolig', selectedTense = 'presens', currentTask = {}, timer, timeLeft, isPausing = false;
@@ -190,7 +206,6 @@
             score++; updateStats();
             inputField.classList.add('correct-blink');
             isPausing = true;
-            // RIKTIG SVAR: Bare 0.2 sekunder pause
             setTimeout(() => {
                 isPausing = false;
                 nextRound();
@@ -202,7 +217,6 @@
             inputField.classList.add('wrong-feedback');
             inputField.value = currentTask.ans.toUpperCase();
             
-            // FEIL SVAR: Redusert til 0.05 sekunder pause
             setTimeout(() => {
                 document.getElementById('word-area').classList.remove('shake');
                 inputField.classList.remove('wrong-feedback');
@@ -210,6 +224,16 @@
                 else { isPausing = false; nextRound(); }
             }, 800);
         }
+    }
+
+    function goToMenu() {
+        clearInterval(timer);
+        isPausing = false;
+        document.getElementById('main-menu').classList.remove('hidden');
+        document.getElementById('modal-overlay').classList.add('hidden');
+        document.getElementById('play-header').classList.add('hidden');
+        document.getElementById('play-content').classList.add('hidden');
+        document.getElementById('kb-container').classList.add('hidden');
     }
 
     function startGame() {
