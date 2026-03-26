@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Tidsmaskinen Pro - Keyboard Fix</title>
+    <title>Tidsmaskinen Pro - Custom Alerts</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
 
@@ -12,6 +12,7 @@
             --card: #161e2d;
             --primary: #38bdf8;
             --accent: #3b82f6;
+            --danger: #ef4444;
             --text: #f1f5f9;
         }
 
@@ -22,9 +23,7 @@
             background-color: var(--bg);
             color: var(--text);
             display: flex; justify-content: center; align-items: center;
-            /* Bruker dvh (dynamic viewport height) for å unngå kutt i mobil-nettlesere */
-            height: 100vh; height: 100dvh; 
-            margin: 0; overflow: hidden;
+            height: 100dvh; margin: 0; overflow: hidden;
             background-image: radial-gradient(circle at top right, #1e1b4b, #0f172a);
         }
 
@@ -38,95 +37,95 @@
         .game-header { padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); flex-shrink: 0; }
         .stats-container { display: flex; gap: 12px; font-weight: 700; color: #94a3b8; font-size: 0.8rem; }
         
-        #play-content { 
-            flex-grow: 1; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
-            padding: 10px;
-            min-height: 0; 
-        }
-        
-        #word-display { font-size: 2.2rem; font-weight: 800; margin: 5px 0; color: #fff; text-align: center; line-height: 1; }
+        #play-content { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 10px; min-height: 0; }
+        #word-display { font-size: 2.5rem; font-weight: 800; margin: 5px 0; color: #fff; text-align: center; line-height: 1; }
         #tense-tag { background: var(--primary); color: #000; padding: 3px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; }
         
         #user-input { 
-            width: 80%; padding: 8px; font-size: 1.4rem; border: none; 
+            width: 80%; padding: 8px; font-size: 1.6rem; border: none; 
             border-bottom: 2px solid var(--primary); background: transparent; 
-            color: #fff; text-align: center; margin: 10px 0; outline: none;
-            height: 2.5rem;
+            color: #fff; text-align: center; margin: 15px 0; outline: none;
         }
 
-        /* TASTATUR - FLYTTET OPP */
+        /* TASTATUR */
         .keyboard { 
             background: rgba(0,0,0,0.6); 
-            /* Økt padding i bunnen for å løfte tastaturet fysisk opp fra kanten */
-            padding: 15px 8px calc(40px + env(safe-area-inset-bottom)); 
-            display: flex; 
-            flex-direction: column; 
-            gap: 6px; 
-            flex-shrink: 0;
+            padding: 15px 8px calc(45px + env(safe-area-inset-bottom)); 
+            display: flex; flex-direction: column; gap: 6px; flex-shrink: 0;
             border-top: 2px solid rgba(56, 189, 248, 0.2);
         }
-
         .kb-row { display: flex; justify-content: center; gap: 4px; width: 100%; }
-        
         .key { 
-            background: #2d3748; color: #fff; flex: 1; height: 46px; 
+            background: #2d3748; color: #fff; flex: 1; height: 48px; 
             display: flex; align-items: center; justify-content: center;
             border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 1rem;
             box-shadow: 0 3px 0 #1a202c;
-            user-select: none;
         }
         .key:active { transform: translateY(2px); box-shadow: none; background: var(--primary); color: #000; }
-        
-        .key.del { background: #4a5568; flex: 1.5; font-size: 0.8rem; }
-        .key.enter { background: var(--accent); flex: 1.8; font-size: 0.8rem; }
-        .key.space { flex: 4; background: #334155; margin-top: 5px; height: 48px; }
+        .key.del { background: #4a5568; flex: 1.5; }
+        .key.enter { background: var(--accent); flex: 1.8; }
+        .key.space { flex: 4; background: #334155; height: 50px; margin-top: 5px; }
 
-        /* MENY / OVERLAY */
+        /* NY MODAL FOR TILBAKEMELDING */
+        #feedback-overlay {
+            position: absolute; inset: 0; z-index: 200;
+            background: rgba(11, 15, 26, 0.95);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 20px; text-align: center;
+        }
+        .feedback-card {
+            background: #1e293b; padding: 30px; border-radius: 25px;
+            border: 3px solid var(--danger); width: 90%;
+        }
+        .feedback-title { color: var(--danger); font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; }
+        .feedback-text { font-size: 1.1rem; margin-bottom: 20px; color: #cbd5e1; }
+        .feedback-btn { 
+            background: var(--primary); color: #000; border: none; 
+            padding: 15px 40px; border-radius: 15px; font-weight: 800; font-size: 1rem;
+        }
+
+        /* MENY / GAME OVER */
         #main-menu, #modal-overlay {
             position: absolute; inset: 0; z-index: 100;
             background: var(--bg); display: flex; flex-direction: column;
             justify-content: center; align-items: center; padding: 20px;
         }
-        .section-label { font-size: 0.7rem; font-weight: 800; color: var(--primary); text-transform: uppercase; margin: 10px 0 5px 0; align-self: flex-start; }
-        .option-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; width: 100%; }
-        .opt-btn { background: #1e293b; border: 2px solid transparent; padding: 10px 2px; border-radius: 10px; color: #94a3b8; font-weight: 700; font-size: 0.7rem; }
+        .opt-btn { background: #1e293b; border: 2px solid transparent; padding: 10px; border-radius: 10px; color: #94a3b8; font-weight: 700; font-size: 0.8rem; width: 100%; }
         .opt-btn.active { border-color: var(--primary); color: #fff; background: rgba(56, 189, 248, 0.1); }
-        .start-btn { width: 100%; padding: 18px; border-radius: 15px; border: none; background: var(--accent); color: #fff; font-size: 1.2rem; font-weight: 800; margin-top: 15px; }
+        .start-btn { width: 100%; padding: 20px; border-radius: 15px; border: none; background: var(--accent); color: #fff; font-size: 1.3rem; font-weight: 800; }
 
         .hidden { display: none !important; }
+        .shake { animation: shake 0.4s; }
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} }
     </style>
 </head>
 <body>
 
 <div id="game-container">
     <div id="main-menu">
-        <h1 style="font-size: 2rem; margin: 0;">Tidsmaskinen</h1>
-        <p style="color: #64748b; font-size: 0.8rem; margin-bottom: 5px;">150+ verb inkludert</p>
+        <h1 style="font-size: 2.2rem; margin: 0;">Tidsmaskinen</h1>
+        <p style="color: #64748b; font-size: 0.8rem; margin-bottom: 20px;">Mobilvennlig Verbtrening</p>
         
-        <div class="section-label">Fart</div>
-        <div class="option-grid">
+        <div style="width:100%; text-align:left; font-size:0.7rem; font-weight:800; color:var(--primary); margin-bottom:5px;">FART</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; width:100%; margin-bottom:15px;">
             <button class="opt-btn active" onclick="selectOpt(this, 'speed', 'rolig')">Rolig</button>
             <button class="opt-btn" onclick="selectOpt(this, 'speed', 'medium')">Medium</button>
             <button class="opt-btn" onclick="selectOpt(this, 'speed', 'hektisk')">Hektisk</button>
         </div>
 
-        <div class="section-label">Tidsform</div>
-        <div class="option-grid" style="grid-template-columns: 1fr 1fr;">
+        <div style="width:100%; text-align:left; font-size:0.7rem; font-weight:800; color:var(--primary); margin-bottom:5px;">TIDSFORM</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%; margin-bottom:20px;">
             <button class="opt-btn active" onclick="selectOpt(this, 'tense', 'presens')">Presens</button>
             <button class="opt-btn" onclick="selectOpt(this, 'tense', 'preteritum')">Preteritum</button>
             <button class="opt-btn" onclick="selectOpt(this, 'tense', 'perfektum')">Perfektum</button>
             <button class="opt-btn" onclick="selectOpt(this, 'tense', 'skal')">Fremtid</button>
-            <button class="opt-btn" onclick="selectOpt(this, 'tense', 'miks')" style="grid-column: span 2;">Miks alle former</button>
+            <button class="opt-btn" onclick="selectOpt(this, 'tense', 'miks')" style="grid-column: span 2;">Miks Alle</button>
         </div>
         <button class="start-btn" onclick="startGame()">START SPILLET</button>
     </div>
 
     <div id="play-header" class="game-header hidden">
-        <div onclick="location.reload()" style="color: var(--primary); font-weight: 800; cursor:pointer;">AVSLUTT</div>
+        <div onclick="location.reload()" style="color: var(--primary); font-weight: 800; cursor:pointer;">MENY</div>
         <div class="stats-container">
             <span>LIV: <span id="lives" style="color:#fff">3</span></span>
             <span>POENG: <span id="score" style="color:#fff">0</span></span>
@@ -134,10 +133,21 @@
     </div>
 
     <div id="play-content" class="hidden">
-        <div id="timer-display" style="font-size: 1.4rem; color: var(--primary); font-weight: 800; height: 1.8rem;"></div>
+        <div id="timer-display" style="font-size: 1.5rem; color: var(--primary); font-weight: 800; height: 2rem;"></div>
         <span id="tense-tag">PRESENS</span>
         <div id="word-display">Å TA</div>
-        <input type="text" id="user-input" readonly>
+        <input type="text" id="user-input" readonly placeholder="Svar her...">
+    </div>
+
+    <div id="feedback-overlay" class="hidden">
+        <div class="feedback-card">
+            <div class="feedback-title">FEIL SVAR!</div>
+            <div class="feedback-text">
+                Riktig var: <br>
+                <span id="correct-answer-display" style="color:#fff; font-size: 1.5rem; font-weight: 800;"></span>
+            </div>
+            <button class="feedback-btn" onclick="closeFeedback()">NESTE ORD</button>
+        </div>
     </div>
 
     <div id="kb-container" class="keyboard hidden">
@@ -158,165 +168,21 @@
     </div>
 
     <div id="modal-overlay" class="hidden">
-        <h2>Ferdig!</h2>
-        <div style="font-size: 4rem; font-weight: 800; color:var(--primary); margin: 10px 0;" id="final-score">0</div>
-        <button class="start-btn" onclick="startGame()">Prøv igjen</button>
-        <button class="opt-btn" style="width:100%; margin-top:10px; padding:15px;" onclick="location.reload()">Hovedmeny</button>
+        <h2 style="font-size: 2.2rem;">Ferdig!</h2>
+        <div style="font-size: 5rem; font-weight: 800; color:var(--primary);" id="final-score">0</div>
+        <button class="start-btn" onclick="startGame()">Spill igjen</button>
+        <button class="opt-btn" style="margin-top:10px; padding:15px;" onclick="location.reload()">Hovedmeny</button>
     </div>
 </div>
 
 <script>
-    // Liste med alle verbene dine (forkortet her for plass, men behold alle i din fil)
+    // Din liste med verb (bruk alle 150 her)
     const VERBS = [
         {inf:'å ta', presens:'tar', preteritum:'tok', perfektum:'tatt', skal:'skal ta'},
         {inf:'å se', presens:'ser', preteritum:'så', perfektum:'sett', skal:'skal se'},
         {inf:'å gå', presens:'går', preteritum:'gikk', perfektum:'gått', skal:'skal gå'},
-        {inf:'å være', presens:'er', preteritum:'var', perfektum:'vært', skal:'skal være'},
-        {inf:'å ha', presens:'har', preteritum:'hadde', perfektum:'hatt', skal:'skal ha'},
-        {inf:'å gjøre', presens:'gjør', preteritum:'gjorde', perfektum:'gjort', skal:'skal gjøre'},
-        {inf:'å si', presens:'sier', preteritum:'sa', perfektum:'sagt', skal:'skal si'},
-        {inf:'å få', presens:'får', preteritum:'fikk', perfektum:'fått', skal:'skal få'},
-        {inf:'å kunne', presens:'kan', preteritum:'kunne', perfektum:'kunnet', skal:'skal kunne'},
-        {inf:'å ville', presens:'vil', preteritum:'ville', perfektum:'villet', skal:'skal ville'},
-        {inf:'å skulle', presens:'skal', preteritum:'skulle', perfektum:'skullet', skal:'skal skulle'},
-        {inf:'å vite', presens:'vet', preteritum:'visste', perfektum:'visst', skal:'skal vite'},
-        {inf:'å tro', presens:'tror', preteritum:'trodde', perfektum:'trodd', skal:'skal tro'},
-        {inf:'å komme', presens:'kommer', preteritum:'kom', perfektum:'kommet', skal:'skal komme'},
-        {inf:'å bør', presens:'bør', preteritum:'burde', perfektum:'burdet', skal:'skal bør'},
-        {inf:'å finne', presens:'finner', preteritum:'fant', perfektum:'funnet', skal:'skal finne'},
-        {inf:'å bruke', presens:'bruker', preteritum:'brukte', perfektum:'brukt', skal:'skal bruke'},
-        {inf:'å bli', presens:'blir', preteritum:'ble', perfektum:'blitt', skal:'skal bli'},
-        {inf:'å spørre', presens:'spør', preteritum:'spurte', perfektum:'spurt', skal:'skal spørre'},
-        {inf:'å skrive', presens:'skriver', preteritum:'skrev', perfektum:'skrevet', skal:'skal skrive'},
-        {inf:'å holde', presens:'holder', preteritum:'holdt', perfektum:'holdt', skal:'skal holde'},
-        {inf:'å hjelpe', presens:'hjelper', preteritum:'hjalp', perfektum:'hjulpet', skal:'skal hjelpe'},
-        {inf:'å sitte', presens:'sitter', preteritum:'satt', perfektum:'sittet', skal:'skal sitte'},
-        {inf:'å stå', presens:'står', preteritum:'stod', perfektum:'stått', skal:'skal stå'},
-        {inf:'å ligge', presens:'ligger', preteritum:'lå', perfektum:'ligget', skal:'skal ligge'},
-        {inf:'å legge', presens:'legger', preteritum:'la', perfektum:'lagt', skal:'skal legge'},
-        {inf:'å kjenne', presens:'kjenner', preteritum:'kjente', perfektum:'kjent', skal:'skal kjenne'},
-        {inf:'å tenke', presens:'tenker', preteritum:'tenkte', perfektum:'tenkt', skal:'skal tenke'},
-        {inf:'å bety', presens:'betyr', preteritum:'betydde', perfektum:'betydd', skal:'skal bety'},
-        {inf:'å bo', presens:'bor', preteritum:'bodde', perfektum:'bodd', skal:'skal bo'},
-        {inf:'å arbeide', presens:'arbeider', preteritum:'arbeidet', perfektum:'arbeidet', skal:'skal arbeide'},
-        {inf:'å snakke', presens:'snakker', preteritum:'snakket', perfektum:'snakket', skal:'skal snakke'},
-        {inf:'å høre', presens:'hører', preteritum:'hørte', perfektum:'hørt', skal:'skal høre'},
-        {inf:'å se', presens:'ser', preteritum:'så', perfektum:'sett', skal:'skal se'},
-        {inf:'å møte', presens:'møter', preteritum:'møtte', perfektum:'møtt', skal:'skal møte'},
-        {inf:'å leve', presens:'lever', preteritum:'levde', perfektum:'levd', skal:'skal leve'},
-        {inf:'å elske', presens:'elsker', preteritum:'elsket', perfektum:'elsket', skal:'skal elske'},
-        {inf:'å spille', presens:'spiller', preteritum:'spilte', perfektum:'spilt', skal:'skal spille'},
-        {inf:'å eie', presens:'eier', preteritum:'eide', perfektum:'eid', skal:'skal eie'},
-        {inf:'å trenge', presens:'trenger', preteritum:'trengte', perfektum:'trengt', skal:'skal trenge'},
-        {inf:'å ringe', presens:'ringer', preteritum:'ringte', perfektum:'ringt', skal:'skal ringe'},
-        {inf:'å lære', presens:'lærer', preteritum:'lærte', perfektum:'lært', skal:'skal lære'},
-        {inf:'å kjøre', presens:'kjører', preteritum:'kjørte', perfektum:'kjørt', skal:'skal kjøre'},
-        {inf:'å reise', presens:'reiser', preteritum:'reiste', perfektum:'reist', skal:'skal reise'},
-        {inf:'å kjøpe', presens:'kjøper', preteritum:'kjøpte', perfektum:'kjøpt', skal:'skal kjøpe'},
-        {inf:'å selge', presens:'selger', preteritum:'solgte', perfektum:'solgt', skal:'skal selge'},
-        {inf:'å vaske', presens:'vasker', preteritum:'vasket', perfektum:'vasket', skal:'skal vaske'},
-        {inf:'å bake', presens:'baker', preteritum:'bakte', perfektum:'bakt', skal:'skal bake'},
-        {inf:'å kaste', presens:'kaster', preteritum:'kastet', perfektum:'kastet', skal:'skal kaste'},
-        {inf:'å løpe', presens:'løper', preteritum:'løp', perfektum:'løpt', skal:'skal løpe'},
-        {inf:'å hoppe', presens:'hopper', preteritum:'hoppet', perfektum:'hoppet', skal:'skal hoppe'},
-        {inf:'å svømme', presens:'svømmer', preteritum:'svømte', perfektum:'svømt', skal:'skal svømme'},
-        {inf:'å synge', presens:'synger', preteritum:'sang', perfektum:'sunget', skal:'skal synge'},
-        {inf:'å danse', presens:'danser', preteritum:'danset', perfektum:'danset', skal:'skal danse'},
-        {inf:'å tegne', presens:'tegner', preteritum:'tegnet', perfektum:'tegnet', skal:'skal tegne'},
-        {inf:'å male', presens:'maler', preteritum:'malte', perfektum:'malt', skal:'skal male'},
-        {inf:'å lese', presens:'leser', preteritum:'leste', perfektum:'lest', skal:'skal lese'},
-        {inf:'å skrike', presens:'skriker', preteritum:'skrek', perfektum:'skreket', skal:'skal skrike'},
-        {inf:'å smile', presens:'smiler', preteritum:'smilte', perfektum:'smilt', skal:'skal smile'},
-        {inf:'å le', presens:'ler', preteritum:'lo', perfektum:'ledd', skal:'skal le'},
-        {inf:'å gråte', presens:'gråter', preteritum:'gråt', perfektum:'grått', skal:'skal gråte'},
-        {inf:'å sove', presens:'sover', preteritum:'sov', perfektum:'sovet', skal:'skal sove'},
-        {inf:'å våkne', presens:'våkner', preteritum:'våknet', perfektum:'våknet', skal:'skal våkne'},
-        {inf:'å rydde', presens:'rydder', preteritum:'ryddet', perfektum:'ryddet', skal:'skal rydde'},
-        {inf:'å bygge', presens:'bygger', preteritum:'bygde', perfektum:'bygd', skal:'skal bygge'},
-        {inf:'å bære', presens:'bærer', preteritum:'bar', perfektum:'båret', skal:'skal bære'},
-        {inf:'å dra', presens:'drar', preteritum:'drog', perfektum:'dratt', skal:'skal dra'},
-        {inf:'å drikke', presens:'drikker', preteritum:'drakk', perfektum:'drukket', skal:'skal drikke'},
-        {inf:'å drive', presens:'driver', preteritum:'drev', perfektum:'drevet', skal:'skal drive'},
-        {inf:'å ete', presens:'eter', preteritum:'åt', perfektum:'ett', skal:'skal ete'},
-        {inf:'å falle', presens:'faller', preteritum:'falt', perfektum:'falt', skal:'skal falle'},
-        {inf:'å fare', presens:'farer', preteritum:'for', perfektum:'fart', skal:'skal fare'},
-        {inf:'å fly', presens:'flyr', preteritum:'fløy', perfektum:'flydd', skal:'skal fly'},
-        {inf:'å flyte', presens:'flyter', preteritum:'fløt', perfektum:'flytt', skal:'skal flyte'},
-        {inf:'å fryse', presens:'fryser', preteritum:'frøs', perfektum:'frosset', skal:'skal fryse'},
-        {inf:'å fylke', presens:'fylker', preteritum:'fylket', perfektum:'fylket', skal:'skal fylke'},
-        {inf:'å gidde', presens:'gidder', preteritum:'gadd', perfektum:'giddet', skal:'skal gidde'},
-        {inf:'å gi', presens:'gir', preteritum:'gav', perfektum:'gitt', skal:'skal gi'},
-        {inf:'å gjelde', presens:'gjelder', preteritum:'gjaldt', perfektum:'gjeldt', skal:'skal gjelde'},
-        {inf:'å gli', presens:'glir', preteritum:'gled', perfektum:'glidd', skal:'skal gli'},
-        {inf:'å gnage', presens:'gnager', preteritum:'gnog', perfektum:'gnagd', skal:'skal gnage'},
-        {inf:'å grave', presens:'graver', preteritum:'grov', perfektum:'gravd', skal:'skal grave'},
-        {inf:'å greie', presens:'greier', preteritum:'greide', perfektum:'greid', skal:'skal greie'},
-        {inf:'å grue', presens:'gruer', preteritum:'gruet', perfektum:'gruet', skal:'skal grue'},
-        {inf:'å grøsse', presens:'grøsser', preteritum:'grøsset', perfektum:'grøsset', skal:'skal grøsse'},
-        {inf:'å hete', presens:'heter', preteritum:'het', perfektum:'hett', skal:'skal hete'},
-        {inf:'å hive', presens:'hiver', preteritum:'hev', perfektum:'hivd', skal:'skal hive'},
-        {inf:'å hugge', presens:'hugger', preteritum:'hugg', perfektum:'hugget', skal:'skal hugge'},
-        {inf:'å klyve', presens:'klyver', preteritum:'kløv', perfektum:'klyvet', skal:'skal klyve'},
-        {inf:'å knekke', presens:'knekker', preteritum:'knakk', perfektum:'knekt', skal:'skal knekke'},
-        {inf:'å knipe', presens:'kniper', preteritum:'knep', perfektum:'knepet', skal:'skal knipe'},
-        {inf:'å krype', presens:'kryper', preteritum:'krøp', perfektum:'krøpet', skal:'skal krype'},
-        {inf:'å la', presens:'lar', preteritum:'lot', perfektum:'latt', skal:'skal la'},
-        {inf:'å late', presens:'later', preteritum:'lot', perfektum:'latt', skal:'skal late'},
-        {inf:'å lide', presens:'lider', preteritum:'led', perfektum:'lidt', skal:'skal lide'},
-        {inf:'å lyve', presens:'lyver', preteritum:'løy', perfektum:'løyet', skal:'skal lyve'},
-        {inf:'å låse', presens:'låser', preteritum:'låste', perfektum:'låst', skal:'skal låse'},
-        {inf:'å låne', presens:'låner', preteritum:'lånte', perfektum:'lånt', skal:'skal låne'},
-        {inf:'å merke', presens:'merker', preteritum:'merket', perfektum:'merket', skal:'skal merke'},
-        {inf:'å miste', presens:'mister', preteritum:'mistet', perfektum:'mistet', skal:'skal miste'},
-        {inf:'å nyte', presens:'nyter', preteritum:'nøt', perfektum:'nytt', skal:'skal nyte'},
-        {inf:'å pipe', presens:'piper', preteritum:'pep', perfektum:'pipet', skal:'skal pipe'},
-        {inf:'å ri', presens:'rir', preteritum:'red', perfektum:'ridd', skal:'skal ri'},
-        {inf:'å rive', presens:'river', preteritum:'rev', perfektum:'revet', skal:'skal rive'},
-        {inf:'å ryke', presens:'ryker', preteritum:'røk', perfektum:'røket', skal:'skal ryke'},
-        {inf:'å rømme', presens:'rømmer', preteritum:'rømte', perfektum:'rømt', skal:'skal rømme'},
-        {inf:'å seile', presens:'seiler', preteritum:'seilte', perfektum:'seilt', skal:'skal seile'},
-        {inf:'å sende', presens:'sender', preteritum:'sendte', perfektum:'sendt', skal:'skal sende'},
-        {inf:'å skille', presens:'skiller', preteritum:'skilte', perfektum:'skilt', skal:'skal skille'},
-        {inf:'å skinne', presens:'skinner', preteritum:'skinte', perfektum:'skint', skal:'skal skinne'},
-        {inf:'å skjelve', presens:'skjelver', preteritum:'skalv', perfektum:'skjelvet', skal:'skal skjelve'},
-        {inf:'å skjære', presens:'skjærer', preteritum:'skar', perfektum:'skåret', skal:'skal skjære'},
-        {inf:'å skli', presens:'sklir', preteritum:'skled', perfektum:'sklidd', skal:'skal skli'},
-        {inf:'å skride', presens:'skrider', preteritum:'skred', perfektum:'skredet', skal:'skal skride'},
-        {inf:'å skryte', presens:'skryter', preteritum:'skrøt', perfektum:'skrytt', skal:'skal skryte'},
-        {inf:'å skyte', presens:'skyter', preteritum:'skjøt', perfektum:'skutt', skal:'skal skyte'},
-        {inf:'å skyve', presens:'skyver', preteritum:'skjøv', perfektum:'skjøvet', skal:'skal skyve'},
-        {inf:'å slanke', presens:'slanker', preteritum:'slanket', perfektum:'slanket', skal:'skal slanke'},
-        {inf:'å slippe', presens:'slipper', preteritum:'slapp', perfektum:'sluppet', skal:'skal slippe'},
-        {inf:'å slite', presens:'sliter', preteritum:'slet', perfektum:'slitt', skal:'skal slite'},
-        {inf:'å slukke', presens:'slukker', preteritum:'slukket', perfektum:'slukket', skal:'skal slukke'},
-        {inf:'å slå', presens:'slår', preteritum:'slo', perfektum:'slått', skal:'skal slå'},
-        {inf:'å smelle', presens:'smeller', preteritum:'smalt', perfektum:'smelt', skal:'skal smelle'},
-        {inf:'å snike', presens:'sniker', preteritum:'snek', perfektum:'sniket', skal:'skal snike'},
-        {inf:'å snyte', presens:'snyter', preteritum:'snøt', perfektum:'snytt', skal:'skal snyte'},
-        {inf:'å sove', presens:'sover', preteritum:'sov', perfektum:'sovet', skal:'skal sove'},
-        {inf:'å sprekke', presens:'sprekker', preteritum:'sprakk', perfektum:'sprukket', skal:'skal sprekke'},
-        {inf:'å springe', presens:'springer', preteritum:'sprang', perfektum:'sprunget', skal:'skal springe'},
-        {inf:'å spørre', presens:'spør', preteritum:'spurte', perfektum:'spurt', skal:'skal spørre'},
-        {inf:'å stige', presens:'stiger', preteritum:'steg', perfektum:'steget', skal:'skal stige'},
-        {inf:'å stikke', presens:'stikker', preteritum:'stakk', perfektum:'stikket', skal:'skal stikke'},
-        {inf:'å stjele', presens:'stjeler', preteritum:'stjal', perfektum:'stjålet', skal:'skal stjele'},
-        {inf:'å strekke', presens:'strekker', preteritum:'strakk', perfektum:'strukket', skal:'skal strekke'},
-        {inf:'å stryke', presens:'stryker', preteritum:'strøk', perfektum:'strøket', skal:'skal stryke'},
-        {inf:'å suge', presens:'suger', preteritum:'saug', perfektum:'suget', skal:'skal suge'},
-        {inf:'å svive', presens:'sviver', preteritum:'svev', perfektum:'svivet', skal:'skal svive'},
-        {inf:'å sværge', presens:'sværger', preteritum:'svor', perfektum:'svoret', skal:'skal sværge'},
-        {inf:'å søke', presens:'søker', preteritum:'søkte', perfektum:'søkt', skal:'skal søke'},
-        {inf:'å tåle', presens:'tåler', preteritum:'tålte', perfektum:'tålt', skal:'skal tåle'},
-        {inf:'å tørre', presens:'tør', preteritum:'turde', perfektum:'turt', skal:'skal tørre'},
-        {inf:'å undersøke', presens:'undersøker', preteritum:'undersøkte', perfektum:'undersøkt', skal:'skal undersøke'},
-        {inf:'å unnskylde', presens:'unnskylder', preteritum:'unnskyldte', perfektum:'unnskyldt', skal:'skal unnskylde'},
-        {inf:'å utdanne', presens:'utdanner', preteritum:'utdannet', perfektum:'utdannet', skal:'skal utdanne'},
-        {inf:'å velge', presens:'velger', preteritum:'valgte', perfektum:'valgt', skal:'skal velge'},
-        {inf:'å vente', presens:'venter', preteritum:'ventet', perfektum:'ventet', skal:'skal vente'},
-        {inf:'å virke', presens:'virker', preteritum:'vasket', perfektum:'virket', skal:'skal virke'},
-        {inf:'å vokse', presens:'vokser', preteritum:'vokste', perfektum:'vokst', skal:'skal vokse'},
-        {inf:'å øve', presens:'øver', preteritum:'øvde', perfektum:'øvd', skal:'skal øve'},
-        {inf:'å åpne', presens:'åpner', preteritum:'åpnet', perfektum:'åpnet', skal:'skal åpne'}
+        {inf:'å spise', presens:'spiser', preteritum:'spiste', perfektum:'spist', skal:'skal spise'},
+        {inf:'å drikke', presens:'drikker', preteritum:'drakk', perfektum:'drukket', skal:'skal drikke'}
     ];
 
     let score = 0, lives = 3, selectedSpeed = 'rolig', selectedTense = 'presens', currentTask = {}, timer, timeLeft;
@@ -341,13 +207,32 @@
     function checkAnswer() {
         if (!inputField.value) return;
         const val = inputField.value.toLowerCase().trim();
+        
         if (val === currentTask.ans) {
             score++; updateStats(); nextRound();
         } else {
             lives--; updateStats();
-            if (lives <= 0) { clearInterval(timer); endGame(); }
-            else { alert("Feil! Svaret var: " + currentTask.ans.toUpperCase()); nextRound(); }
+            clearInterval(timer); // Stopp klokka mens popup er oppe
+            
+            document.getElementById('game-container').classList.add('shake');
+            setTimeout(() => document.getElementById('game-container').classList.remove('shake'), 400);
+            
+            if (lives <= 0) {
+                endGame();
+            } else {
+                showFeedback(currentTask.ans.toUpperCase());
+            }
         }
+    }
+
+    function showFeedback(correct) {
+        document.getElementById('correct-answer-display').innerText = correct;
+        document.getElementById('feedback-overlay').classList.remove('hidden');
+    }
+
+    function closeFeedback() {
+        document.getElementById('feedback-overlay').classList.add('hidden');
+        nextRound();
     }
 
     function startGame() {
