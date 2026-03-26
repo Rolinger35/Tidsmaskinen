@@ -2,7 +2,7 @@
 <html lang="no">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tidsmaskinen Pro</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
@@ -23,23 +23,24 @@
             color: var(--text);
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh; margin: 0; overflow: hidden;
+            touch-action: manipulation;
         }
 
         #game-container {
             background: var(--card);
-            padding: 2rem;
+            padding: 1.5rem;
             border-radius: 40px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
             width: 95%; max-width: 500px;
             text-align: center;
             position: relative;
             border: 1px solid rgba(255, 255, 255, 0.08);
-            min-height: 650px;
+            min-height: 90vh;
             display: flex; flex-direction: column;
         }
 
         .game-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
-        .back-btn { font-size: 1.8rem; cursor: pointer; color: var(--primary); opacity: 0.7; transition: 0.3s; }
+        .back-btn { font-size: 1.8rem; cursor: pointer; color: var(--primary); opacity: 0.7; transition: 0.3s; padding: 5px; }
         .stats-container { display: flex; gap: 20px; font-weight: 700; color: #64748b; font-size: 0.85rem; }
 
         #timer-display { font-size: 1.5rem; font-weight: 800; color: var(--primary); height: 2rem; margin-bottom: 5px; }
@@ -50,30 +51,36 @@
         .menu-title { font-size: 2.4rem; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 0.5rem; background: linear-gradient(to bottom, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .section-label { font-size: 0.7rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.8rem; display: block; text-align: left; }
         
-        .option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1.5rem; }
-        .opt-btn { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); padding: 10px; border-radius: 12px; color: #94a3b8; cursor: pointer; font-weight: 700; }
+        .option-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 1.5rem; }
+        .opt-btn { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); padding: 10px; border-radius: 12px; color: #94a3b8; cursor: pointer; font-weight: 700; font-size: 0.8rem; }
         .opt-btn.active { background: rgba(56, 189, 248, 0.1); border-color: var(--primary); color: #fff; }
 
         #word-display { font-size: 3rem; font-weight: 800; margin: 0.5rem 0; color: #fff; letter-spacing: -1.5px; }
         #tense-tag { background: var(--primary); color: #000; padding: 4px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 800; }
         
         #user-input { 
-            width: 100%; padding: 15px; font-size: 1.4rem; border: 2px solid rgba(255,255,255,0.1); 
+            width: 100%; padding: 12px; font-size: 1.6rem; border: 2px solid rgba(255,255,255,0.1); 
             border-radius: 15px; background: rgba(0,0,0,0.2); color: #fff; text-align: center; 
-            margin: 1rem 0; pointer-events: none; /* Skriv kun med virtuelt tastatur */
+            margin: 1rem 0; pointer-events: none;
         }
 
-        /* VIRTUELT TASTATUR */
-        .keyboard { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; margin-top: auto; padding-top: 10px; }
+        /* NYTT MOBIL-TASTATUR */
+        .keyboard { 
+            display: flex; flex-direction: column; gap: 6px;
+            margin-top: auto; padding-top: 10px;
+        }
+        .kb-row { display: flex; justify-content: center; gap: 4px; width: 100%; }
+        
         .key { 
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
-            color: #fff; padding: 12px 0; border-radius: 8px; cursor: pointer; 
-            font-weight: 700; font-size: 0.9rem; transition: 0.1s; 
-            user-select: none;
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); 
+            color: #fff; flex: 1; height: 50px; display: flex; align-items: center; justify-content: center;
+            border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 1.1rem; 
+            transition: 0.1s; user-select: none;
         }
         .key:active { background: var(--primary); color: #000; transform: scale(0.95); }
-        .key.wide { grid-column: span 2; background: rgba(56, 189, 248, 0.2); }
-        .key.enter { grid-column: span 2; background: var(--accent); }
+        .key.special { background: rgba(255,255,255,0.15); flex: 1.5; font-size: 0.9rem; }
+        .key.enter { background: var(--accent); flex: 2; font-size: 0.9rem; }
+        .key.space { flex: 2.5; }
 
         .start-btn { width: 100%; padding: 18px; border-radius: 20px; border: none; background: var(--accent); color: #fff; font-size: 1.1rem; font-weight: 800; cursor: pointer; margin-top: auto; }
 
@@ -104,12 +111,12 @@
                 <button class="opt-btn" onclick="selectOpt(this, 'speed', 'hektisk')">Hektisk</button>
             </div>
             <span class="section-label">Tidsform</span>
-            <div class="option-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+            <div class="option-grid" style="grid-template-columns: 1fr 1fr;">
                 <button class="opt-btn active" onclick="selectOpt(this, 'tense', 'presens')">Presens</button>
                 <button class="opt-btn" onclick="selectOpt(this, 'tense', 'preteritum')">Preteritum</button>
                 <button class="opt-btn" onclick="selectOpt(this, 'tense', 'perfektum')">Perfektum</button>
                 <button class="opt-btn" onclick="selectOpt(this, 'tense', 'skal')">Fremtid</button>
-                <button class="opt-btn" onclick="selectOpt(this, 'tense', 'miks')" style="grid-column: span 2;">Miks</button>
+                <button class="opt-btn" onclick="selectOpt(this, 'tense', 'miks')" style="grid-column: span 2;">Miks alle</button>
             </div>
         </div>
         <button class="start-btn" onclick="startGame()">START</button>
@@ -122,12 +129,19 @@
         <input type="text" id="user-input" readonly>
         
         <div class="keyboard">
-            <div class="key" onclick="press('q')">Q</div><div class="key" onclick="press('w')">W</div><div class="key" onclick="press('e')">E</div><div class="key" onclick="press('r')">R</div><div class="key" onclick="press('t')">T</div><div class="key" onclick="press('y')">Y</div><div class="key" onclick="press('u')">U</div><div class="key" onclick="press('i')">I</div><div class="key" onclick="press('o')">O</div><div class="key" onclick="press('p')">P</div>
-            <div class="key" onclick="press('a')">A</div><div class="key" onclick="press('s')">S</div><div class="key" onclick="press('d')">D</div><div class="key" onclick="press('f')">F</div><div class="key" onclick="press('g')">G</div><div class="key" onclick="press('h')">H</div><div class="key" onclick="press('j')">J</div><div class="key" onclick="press('k')">K</div><div class="key" onclick="press('l')">L</div><div class="key" onclick="press('å')">Å</div>
-            <div class="key" onclick="press('æ')">Æ</div><div class="key" onclick="press('ø')">Ø</div><div class="key" onclick="press('z')">Z</div><div class="key" onclick="press('x')">X</div><div class="key" onclick="press('c')">C</div><div class="key" onclick="press('v')">V</div><div class="key" onclick="press('b')">B</div><div class="key" onclick="press('n')">N</div><div class="key" onclick="press('m')">M</div><div class="key" onclick="press(' ')">_</div>
-            <div class="key wide" onclick="press('Backspace')">DEL</div>
-            <div class="key wide" style="grid-column: span 6; opacity: 0.5;">Tidsmaskinen Pro</div>
-            <div class="key enter" onclick="press('Enter')">OK</div>
+            <div class="kb-row">
+                <div class="key" onclick="press('q')">Q</div><div class="key" onclick="press('w')">W</div><div class="key" onclick="press('e')">E</div><div class="key" onclick="press('r')">R</div><div class="key" onclick="press('t')">T</div><div class="key" onclick="press('y')">Y</div><div class="key" onclick="press('u')">U</div><div class="key" onclick="press('i')">I</div><div class="key" onclick="press('o')">O</div><div class="key" onclick="press('p')">P</div><div class="key" onclick="press('å')">Å</div>
+            </div>
+            <div class="kb-row">
+                <div class="key" onclick="press('a')">A</div><div class="key" onclick="press('s')">S</div><div class="key" onclick="press('d')">D</div><div class="key" onclick="press('f')">F</div><div class="key" onclick="press('g')">G</div><div class="key" onclick="press('h')">H</div><div class="key" onclick="press('j')">J</div><div class="key" onclick="press('k')">K</div><div class="key" onclick="press('l')">L</div><div class="key" onclick="press('ø')">Ø</div><div class="key" onclick="press('æ')">Æ</div>
+            </div>
+            <div class="kb-row">
+                <div class="key" onclick="press('z')">Z</div><div class="key" onclick="press('x')">X</div><div class="key" onclick="press('c')">C</div><div class="key" onclick="press('v')">V</div><div class="key" onclick="press('b')">B</div><div class="key" onclick="press('n')">N</div><div class="key" onclick="press('m')">M</div><div class="key space" onclick="press(' ')">_</div>
+            </div>
+            <div class="kb-row">
+                <div class="key special" onclick="press('Backspace')">SLETT</div>
+                <div class="key enter" onclick="press('Enter')">ENTER</div>
+            </div>
         </div>
     </div>
 
@@ -168,7 +182,6 @@
         }
     }
 
-    // Støtt fysisk tastatur også
     window.addEventListener('keydown', (e) => {
         if (document.getElementById('play-screen').classList.contains('hidden')) return;
         if (e.key === 'Backspace' || e.key === 'Enter') press(e.key);
@@ -176,6 +189,7 @@
     });
 
     function checkAnswer() {
+        if (!inputField.value) return;
         const val = inputField.value.toLowerCase().trim();
         if (val === currentTask.ans) {
             score++; updateStats(); nextRound();
