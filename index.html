@@ -16,75 +16,95 @@
             --text: #f1f5f9;
         }
 
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg);
             background-image: radial-gradient(circle at top right, #1e1b4b, #0f172a);
             color: var(--text);
             display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; margin: 0; overflow: hidden;
+            height: 100vh; margin: 0; overflow: hidden;
             touch-action: manipulation;
         }
 
         #game-container {
             background: var(--card);
-            padding: 1.5rem;
-            border-radius: 40px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            width: 95%; max-width: 500px;
-            text-align: center;
+            width: 100%;
+            height: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
             position: relative;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            min-height: 90vh;
-            display: flex; flex-direction: column;
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .game-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
-        .back-btn { font-size: 1.8rem; cursor: pointer; color: var(--primary); opacity: 0.7; transition: 0.3s; padding: 5px; }
-        .stats-container { display: flex; gap: 20px; font-weight: 700; color: #64748b; font-size: 0.85rem; }
+        /* Header */
+        .game-header { 
+            padding: 1rem 1.5rem; 
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0,0,0,0.2);
+        }
+        .back-btn { font-size: 1.5rem; cursor: pointer; color: var(--primary); font-weight: 800; }
+        .stats-container { display: flex; gap: 15px; font-weight: 700; color: #94a3b8; font-size: 0.9rem; }
 
-        #timer-display { font-size: 1.5rem; font-weight: 800; color: var(--primary); height: 2rem; margin-bottom: 5px; }
-        .tick { animation: pulse-hit 0.2s ease-out; }
-        @keyframes pulse-hit { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
-        .low-time { color: var(--danger) !important; }
+        /* Spillområde */
+        #play-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
 
-        .menu-title { font-size: 2.4rem; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 0.5rem; background: linear-gradient(to bottom, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .section-label { font-size: 0.7rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.8rem; display: block; text-align: left; }
-        
-        .option-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 1.5rem; }
-        .opt-btn { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); padding: 10px; border-radius: 12px; color: #94a3b8; cursor: pointer; font-weight: 700; font-size: 0.8rem; }
-        .opt-btn.active { background: rgba(56, 189, 248, 0.1); border-color: var(--primary); color: #fff; }
-
-        #word-display { font-size: 3rem; font-weight: 800; margin: 0.5rem 0; color: #fff; letter-spacing: -1.5px; }
-        #tense-tag { background: var(--primary); color: #000; padding: 4px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 800; }
+        #timer-display { font-size: 1.8rem; font-weight: 800; color: var(--primary); height: 2.2rem; }
+        #word-display { font-size: 3.2rem; font-weight: 800; margin: 0.5rem 0; color: #fff; text-align: center; }
+        #tense-tag { background: var(--primary); color: #000; padding: 5px 15px; border-radius: 10px; font-size: 0.8rem; font-weight: 800; }
         
         #user-input { 
-            width: 100%; padding: 12px; font-size: 1.6rem; border: 2px solid rgba(255,255,255,0.1); 
-            border-radius: 15px; background: rgba(0,0,0,0.2); color: #fff; text-align: center; 
-            margin: 1rem 0; pointer-events: none;
+            width: 90%; padding: 10px; font-size: 1.8rem; border: none; 
+            border-bottom: 3px solid var(--primary); background: transparent; 
+            color: #fff; text-align: center; margin: 1rem 0; outline: none;
         }
 
-        /* NYTT MOBIL-TASTATUR */
+        /* TASTATUR - Optimalisert for tomler */
         .keyboard { 
+            background: rgba(0,0,0,0.3);
+            padding: 10px 5px 25px 5px; /* Ekstra bunn-padding for moderne mobiler */
             display: flex; flex-direction: column; gap: 6px;
-            margin-top: auto; padding-top: 10px;
         }
-        .kb-row { display: flex; justify-content: center; gap: 4px; width: 100%; }
+        .kb-row { display: flex; justify-content: center; gap: 4px; }
         
         .key { 
-            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); 
-            color: #fff; flex: 1; height: 50px; display: flex; align-items: center; justify-content: center;
-            border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 1.1rem; 
-            transition: 0.1s; user-select: none;
+            background: #2d3748; 
+            color: #fff; flex: 1; height: 50px; 
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 1.1rem;
+            box-shadow: 0 3px 0 #1a202c;
         }
-        .key:active { background: var(--primary); color: #000; transform: scale(0.95); }
-        .key.special { background: rgba(255,255,255,0.15); flex: 1.5; font-size: 0.9rem; }
-        .key.enter { background: var(--accent); flex: 2; font-size: 0.9rem; }
-        .key.space { flex: 2.5; }
+        .key:active { transform: translateY(2px); box-shadow: none; background: var(--primary); color: #000; }
+        
+        .key.special { background: #4a5568; flex: 1.4; font-size: 0.9rem; }
+        .key.enter { background: var(--accent); flex: 1.8; }
+        .key.space { flex: 2; }
 
-        .start-btn { width: 100%; padding: 18px; border-radius: 20px; border: none; background: var(--accent); color: #fff; font-size: 1.1rem; font-weight: 800; cursor: pointer; margin-top: auto; }
+        /* Meny-stil */
+        #main-menu, #modal-overlay {
+            position: absolute; inset: 0; z-index: 100;
+            background: var(--bg); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; padding: 2rem;
+        }
 
-        #modal-overlay { position: absolute; inset: 0; background: var(--card); border-radius: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; padding: 2.5rem; }
+        .menu-title { font-size: 2.8rem; font-weight: 800; margin-bottom: 2rem; color: #fff; }
+        .option-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; margin-bottom: 1.5rem; }
+        .opt-btn { background: #1e293b; border: 2px solid transparent; padding: 15px 5px; border-radius: 12px; color: #94a3b8; font-weight: 700; font-size: 0.85rem; }
+        .opt-btn.active { border-color: var(--primary); color: #fff; background: rgba(56, 189, 248, 0.1); }
+
+        .start-btn { width: 100%; padding: 20px; border-radius: 20px; border: none; background: var(--accent); color: #fff; font-size: 1.3rem; font-weight: 800; box-shadow: 0 5px 0 #1e40af; }
+        .start-btn:active { transform: translateY(3px); box-shadow: none; }
+
         .hidden { display: none !important; }
         .shake { animation: shake 0.4s; }
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} }
@@ -93,74 +113,71 @@
 <body>
 
 <div id="game-container">
+    <div id="main-menu">
+        <h1 class="menu-title">Tidsmaskinen</h1>
+        
+        <span style="color:var(--primary); font-weight:800; align-self:start; margin-bottom:10px; font-size:0.7rem; text-transform:uppercase;">Velg fart</span>
+        <div class="option-grid">
+            <button class="opt-btn active" onclick="selectOpt(this, 'speed', 'rolig')">Rolig</button>
+            <button class="opt-btn" onclick="selectOpt(this, 'speed', 'medium')">Medium</button>
+            <button class="opt-btn" onclick="selectOpt(this, 'speed', 'hektisk')">Hektisk</button>
+        </div>
+
+        <span style="color:var(--primary); font-weight:800; align-self:start; margin-bottom:10px; font-size:0.7rem; text-transform:uppercase;">Velg tidsform</span>
+        <div class="option-grid" style="grid-template-columns: 1fr 1fr;">
+            <button class="opt-btn active" onclick="selectOpt(this, 'tense', 'presens')">Presens</button>
+            <button class="opt-btn" onclick="selectOpt(this, 'tense', 'preteritum')">Preteritum</button>
+            <button class="opt-btn" onclick="selectOpt(this, 'tense', 'perfektum')">Perfektum</button>
+            <button class="opt-btn" onclick="selectOpt(this, 'tense', 'miks')">🌀 Miks</button>
+        </div>
+        
+        <button class="start-btn" onclick="startGame()">START SPILLET</button>
+    </div>
+
     <div id="play-header" class="game-header hidden">
-        <div class="back-btn" onclick="showMenu()">←</div>
+        <div class="back-btn" onclick="showMenu()">✕</div>
         <div class="stats-container">
             <span>LIV: <span id="lives" style="color:#fff">3</span></span>
             <span>SCORE: <span id="score" style="color:#fff">0</span></span>
         </div>
     </div>
 
-    <div id="main-menu">
-        <h1 class="menu-title">Tidsmaskinen</h1>
-        <div class="config-section">
-            <span class="section-label">Fart</span>
-            <div class="option-grid">
-                <button class="opt-btn active" onclick="selectOpt(this, 'speed', 'rolig')">Rolig</button>
-                <button class="opt-btn" onclick="selectOpt(this, 'speed', 'medium')">Medium</button>
-                <button class="opt-btn" onclick="selectOpt(this, 'speed', 'hektisk')">Hektisk</button>
-            </div>
-            <span class="section-label">Tidsform</span>
-            <div class="option-grid" style="grid-template-columns: 1fr 1fr;">
-                <button class="opt-btn active" onclick="selectOpt(this, 'tense', 'presens')">Presens</button>
-                <button class="opt-btn" onclick="selectOpt(this, 'tense', 'preteritum')">Preteritum</button>
-                <button class="opt-btn" onclick="selectOpt(this, 'tense', 'perfektum')">Perfektum</button>
-                <button class="opt-btn" onclick="selectOpt(this, 'tense', 'skal')">Fremtid</button>
-                <button class="opt-btn" onclick="selectOpt(this, 'tense', 'miks')" style="grid-column: span 2;">Miks alle</button>
-            </div>
-        </div>
-        <button class="start-btn" onclick="startGame()">START</button>
+    <div id="play-content" class="hidden">
+        <div id="timer-display"></div>
+        <div><span id="tense-tag">PRESENS</span></div>
+        <div id="word-display">Å TA</div>
+        <input type="text" id="user-input" readonly placeholder="Svaret her...">
     </div>
 
-    <div id="play-screen" class="hidden">
-        <div id="timer-display"></div>
-        <div id="tense-tag-container"><span id="tense-tag">PRESENS</span></div>
-        <div id="word-display">Å TA</div>
-        <input type="text" id="user-input" readonly>
-        
-        <div class="keyboard">
-            <div class="kb-row">
-                <div class="key" onclick="press('q')">Q</div><div class="key" onclick="press('w')">W</div><div class="key" onclick="press('e')">E</div><div class="key" onclick="press('r')">R</div><div class="key" onclick="press('t')">T</div><div class="key" onclick="press('y')">Y</div><div class="key" onclick="press('u')">U</div><div class="key" onclick="press('i')">I</div><div class="key" onclick="press('o')">O</div><div class="key" onclick="press('p')">P</div><div class="key" onclick="press('å')">Å</div>
-            </div>
-            <div class="kb-row">
-                <div class="key" onclick="press('a')">A</div><div class="key" onclick="press('s')">S</div><div class="key" onclick="press('d')">D</div><div class="key" onclick="press('f')">F</div><div class="key" onclick="press('g')">G</div><div class="key" onclick="press('h')">H</div><div class="key" onclick="press('j')">J</div><div class="key" onclick="press('k')">K</div><div class="key" onclick="press('l')">L</div><div class="key" onclick="press('ø')">Ø</div><div class="key" onclick="press('æ')">Æ</div>
-            </div>
-            <div class="kb-row">
-                <div class="key" onclick="press('z')">Z</div><div class="key" onclick="press('x')">X</div><div class="key" onclick="press('c')">C</div><div class="key" onclick="press('v')">V</div><div class="key" onclick="press('b')">B</div><div class="key" onclick="press('n')">N</div><div class="key" onclick="press('m')">M</div><div class="key space" onclick="press(' ')">_</div>
-            </div>
-            <div class="kb-row">
-                <div class="key special" onclick="press('Backspace')">SLETT</div>
-                <div class="key enter" onclick="press('Enter')">ENTER</div>
-            </div>
+    <div id="kb-container" class="keyboard hidden">
+        <div class="kb-row">
+            <div class="key" onclick="press('q')">Q</div><div class="key" onclick="press('w')">W</div><div class="key" onclick="press('e')">E</div><div class="key" onclick="press('r')">R</div><div class="key" onclick="press('t')">T</div><div class="key" onclick="press('y')">Y</div><div class="key" onclick="press('u')">U</div><div class="key" onclick="press('i')">I</div><div class="key" onclick="press('o')">O</div><div class="key" onclick="press('p')">P</div><div class="key" onclick="press('å')">Å</div>
+        </div>
+        <div class="kb-row">
+            <div class="key" onclick="press('a')">A</div><div class="key" onclick="press('s')">S</div><div class="key" onclick="press('d')">D</div><div class="key" onclick="press('f')">F</div><div class="key" onclick="press('g')">G</div><div class="key" onclick="press('h')">H</div><div class="key" onclick="press('j')">J</div><div class="key" onclick="press('k')">K</div><div class="key" onclick="press('l')">L</div><div class="key" onclick="press('ø')">Ø</div><div class="key" onclick="press('æ')">Æ</div>
+        </div>
+        <div class="kb-row">
+            <div class="key special" onclick="press('Backspace')">DEL</div>
+            <div class="key" onclick="press('z')">Z</div><div class="key" onclick="press('x')">X</div><div class="key" onclick="press('c')">C</div><div class="key" onclick="press('v')">V</div><div class="key" onclick="press('b')">B</div><div class="key" onclick="press('n')">N</div><div class="key" onclick="press('m')">M</div><div class="key space" onclick="press(' ')">_</div>
+            <div class="key enter" onclick="press('Enter')">OK</div>
         </div>
     </div>
 
     <div id="modal-overlay" class="hidden">
-        <h2 style="font-size: 2rem; font-weight: 800;">Ferdig!</h2>
-        <div style="font-size: 4rem; font-weight: 800; margin: 1rem 0;" id="final-score">0</div>
+        <h2 style="font-size: 2.5rem;">Ferdig!</h2>
+        <div style="font-size: 5rem; font-weight: 800; color:var(--primary);" id="final-score">0</div>
         <button class="start-btn" onclick="startGame()">Spill igjen</button>
-        <button class="opt-btn" style="width:100%; margin-top:10px; padding:15px;" onclick="showMenu()">Meny</button>
+        <button class="opt-btn" style="width:100%; margin-top:15px; padding:15px;" onclick="showMenu()">Tilbake til meny</button>
     </div>
 </div>
 
 <script>
     const VERBS = [
-        {inf:'å ta', presens:'tar', preteritum:'tok', perfektum:'tatt', skal:'skal ta'},
-        {inf:'å se', presens:'ser', preteritum:'så', perfektum:'sett', skal:'skal se'},
-        {inf:'å gå', presens:'går', preteritum:'gikk', perfektum:'gått', skal:'skal gå'},
-        {inf:'å spise', presens:'spiser', preteritum:'spiste', perfektum:'spist', skal:'skal spise'},
-        {inf:'å vite', presens:'vet', preteritum:'visste', perfektum:'visst', skal:'skal vite'},
-        {inf:'å være', presens:'er', preteritum:'var', perfektum:'vært', skal:'skal være'}
+        {inf:'å ta', presens:'tar', preteritum:'tok', perfektum:'tatt'},
+        {inf:'å se', presens:'ser', preteritum:'så', perfektum:'sett'},
+        {inf:'å gå', presens:'går', preteritum:'gikk', perfektum:'gått'},
+        {inf:'å vite', presens:'vet', preteritum:'visste', perfektum:'visst'},
+        {inf:'å være', presens:'er', preteritum:'var', perfektum:'vært'}
     ];
 
     let score = 0, lives = 3, selectedSpeed = 'rolig', selectedTense = 'presens', currentTask = {}, timer, timeLeft;
@@ -178,76 +195,55 @@
         } else if (key === 'Enter') {
             checkAnswer();
         } else {
-            if (inputField.value.length < 20) inputField.value += key;
+            if (inputField.value.length < 15) inputField.value += key;
         }
     }
 
-    window.addEventListener('keydown', (e) => {
-        if (document.getElementById('play-screen').classList.contains('hidden')) return;
-        if (e.key === 'Backspace' || e.key === 'Enter') press(e.key);
-        else if (e.key.length === 1) press(e.key.toLowerCase());
-    });
-
     function checkAnswer() {
         if (!inputField.value) return;
-        const val = inputField.value.toLowerCase().trim();
-        if (val === currentTask.ans) {
+        if (inputField.value.toLowerCase().trim() === currentTask.ans) {
             score++; updateStats(); nextRound();
         } else {
-            handleWrong(`Feil! Riktig: ${currentTask.ans.toUpperCase()}`);
+            lives--; updateStats();
+            document.getElementById('game-container').classList.add('shake');
+            setTimeout(() => document.getElementById('game-container').classList.remove('shake'), 400);
+            if (lives <= 0) { clearInterval(timer); endGame(); }
+            else { alert("Feil! Svaret var: " + currentTask.ans.toUpperCase()); nextRound(); }
         }
     }
 
     function startGame() {
-        score = 0; lives = 3;
+        score = 0; lives = 3; updateStats();
         document.getElementById('main-menu').classList.add('hidden');
         document.getElementById('modal-overlay').classList.add('hidden');
-        document.getElementById('play-screen').classList.remove('hidden');
         document.getElementById('play-header').classList.remove('hidden');
-        updateStats(); nextRound();
+        document.getElementById('play-content').classList.remove('hidden');
+        document.getElementById('kb-container').classList.remove('hidden');
+        nextRound();
     }
 
     function nextRound() {
         clearInterval(timer);
         const verb = VERBS[Math.floor(Math.random() * VERBS.length)];
-        let tense = selectedTense;
-        if (tense === 'miks') tense = ['presens', 'preteritum', 'perfektum', 'skal'][Math.floor(Math.random()*4)];
+        let tense = selectedTense === 'miks' ? ['presens','preteritum','perfektum'][Math.floor(Math.random()*3)] : selectedTense;
         currentTask = { inf: verb.inf, ans: verb[tense], tenseName: tense.toUpperCase() };
-        document.getElementById('word-display').innerText = currentTask.inf;
-        document.getElementById('tense-tag').innerText = currentTask.tenseName === 'SKAL' ? 'FREMTID' : currentTask.tenseName;
+        
+        document.getElementById('word-display').innerText = currentTask.inf.toUpperCase();
+        document.getElementById('tense-tag').innerText = currentTask.tenseName;
         inputField.value = '';
+
         if (selectedSpeed !== 'rolig') startTimer();
         else document.getElementById('timer-display').innerText = '';
     }
 
     function startTimer() {
         timeLeft = (selectedSpeed === 'hektisk') ? 5 : 10;
-        updateTimerUI(timeLeft);
+        document.getElementById('timer-display').innerText = timeLeft + "s";
         timer = setInterval(() => {
-            timeLeft--; updateTimerUI(timeLeft);
-            if (timeLeft <= 0) { clearInterval(timer); handleWrong(`Tiden gikk ut! Svaret var ${currentTask.ans.toUpperCase()}`); }
+            timeLeft--;
+            document.getElementById('timer-display').innerText = timeLeft + "s";
+            if (timeLeft <= 0) { clearInterval(timer); checkAnswer(); }
         }, 1000);
-    }
-
-    function updateTimerUI(sec) {
-        const td = document.getElementById('timer-display');
-        td.innerText = sec + "s";
-        td.classList.remove('tick'); void td.offsetWidth; td.classList.add('tick');
-        if (sec <= 3) td.classList.add('low-time'); else td.classList.remove('low-time');
-    }
-
-    function handleWrong(msg) {
-        lives--; updateStats();
-        document.getElementById('game-container').classList.add('shake');
-        setTimeout(() => document.getElementById('game-container').classList.remove('shake'), 400);
-        if (lives <= 0) { clearInterval(timer); showModal(msg); }
-        else { alert(msg); nextRound(); }
-    }
-
-    function showModal(msg) {
-        document.getElementById('final-score').innerText = score;
-        document.getElementById('modal-overlay').classList.remove('hidden');
-        document.getElementById('play-header').classList.add('hidden');
     }
 
     function updateStats() {
@@ -255,11 +251,17 @@
         document.getElementById('lives').innerText = lives;
     }
 
+    function endGame() {
+        document.getElementById('final-score').innerText = score;
+        document.getElementById('modal-overlay').classList.remove('hidden');
+    }
+
     function showMenu() {
         clearInterval(timer);
         document.getElementById('main-menu').classList.remove('hidden');
-        document.getElementById('play-screen').classList.add('hidden');
         document.getElementById('play-header').classList.add('hidden');
+        document.getElementById('play-content').classList.add('hidden');
+        document.getElementById('kb-container').classList.add('hidden');
         document.getElementById('modal-overlay').classList.add('hidden');
     }
 </script>
