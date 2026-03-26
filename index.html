@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Tidsmaskinen Pro - Final Touch</title>
+    <title>Tidsmaskinen Pro - Subtle Delete</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
 
@@ -35,212 +35,206 @@
             overflow: hidden;
         }
 
-        .game-header { padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); flex-shrink: 0; }
-        .stats-container { display: flex; gap: 12px; font-weight: 700; color: #94a3b8; font-size: 0.8rem; }
-        
-        #play-content { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 10px; min-height: 0; }
-        #word-area { display: flex; flex-direction: column; align-items: center; width: 100%; }
-        #word-display { font-size: 2.4rem; font-weight: 800; margin: 5px 0; color: #fff; text-align: center; }
-        #tense-tag { background: var(--primary); color: #000; padding: 3px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; }
-        
-        #user-input { 
-            width: 85%; padding: 8px; font-size: 1.6rem; border: none; 
-            border-bottom: 3px solid var(--primary); background: transparent; 
-            color: #fff; text-align: center; margin: 15px 0; outline: none;
-            height: 3.5rem;
-        }
-        
-        #user-input.wrong-feedback { border-bottom-color: var(--danger); color: var(--danger); }
-        #user-input.correct-blink { border-bottom-color: var(--success); color: var(--success); }
-
-        .keyboard { 
-            background: rgba(0,0,0,0.6); 
-            padding: 10px 8px calc(45px + env(safe-area-inset-bottom)); 
-            display: flex; flex-direction: column; gap: 6px; flex-shrink: 0;
-            border-top: 2px solid rgba(56, 189, 248, 0.2);
-        }
-        .kb-row { display: flex; justify-content: center; gap: 4px; width: 100%; }
-        .key { 
-            background: #2d3748; color: #fff; flex: 1; height: 48px; 
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 1rem;
-            box-shadow: 0 3px 0 #1a202c; user-select: none;
-        }
-        .key:active { transform: translateY(2px); box-shadow: none; background: var(--primary); color: #000; }
-        .key.del { background: #4a5568; flex: 1.5; }
-        .key.enter { background: var(--accent); flex: 1.8; }
-        .key.space { flex: 4; background: #334155; height: 50px; margin-top: 5px; }
-
-        #main-menu, #modal-overlay {
+        /* SCREENS */
+        #main-menu, #study-screen, #add-screen, #modal-overlay {
             position: absolute; inset: 0; z-index: 100;
             background: var(--bg); display: flex; flex-direction: column;
-            justify-content: center; align-items: center; padding: 20px;
+            padding: 20px; overflow-y: auto;
         }
-        
-        /* Felles stil for store knapper i menyer */
-        .big-btn { 
-            width: 100%; 
-            padding: 20px; 
-            border-radius: 15px; 
-            border: none; 
-            font-size: 1.3rem; 
-            font-weight: 800; 
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-        .big-btn:active { transform: scale(0.98); }
-        
-        .btn-primary { background: var(--accent); color: #fff; margin-top: 15px; }
-        .btn-secondary { background: #1e293b; color: #94a3b8; border: 2px solid #334155; margin-top: 10px; }
+        #main-menu { justify-content: center; align-items: center; }
 
-        .opt-btn { background: #1e293b; border: 2px solid transparent; padding: 10px; border-radius: 10px; color: #94a3b8; font-weight: 700; font-size: 0.8rem; width: 100%; }
+        /* TABELL & SUBTIL SLETTING */
+        #study-list-container {
+            flex-grow: 1; overflow-y: auto; margin-top: 10px;
+            border-radius: 10px; background: rgba(255,255,255,0.02);
+        }
+        .study-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+        .study-table th { position: sticky; top: 0; background: #1a202c; padding: 12px; text-align: left; color: var(--primary); font-size: 0.7rem; letter-spacing: 1px; }
+        .study-table td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.03); color: #94a3b8; }
+        
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #475569; /* Veldig nøytral grå */
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 5px;
+            transition: color 0.2s, transform 0.1s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .delete-btn:hover { color: var(--danger); }
+        .delete-btn:active { transform: scale(0.9); }
+
+        /* INPUTS */
+        .search-box, .add-input { 
+            width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #334155;
+            background: #1e293b; color: #fff; outline: none; margin-bottom: 10px;
+            font-family: inherit; font-size: 0.95rem;
+        }
+        .search-box:focus, .add-input:focus { border-color: var(--primary); }
+
+        /* KNAPPER */
+        .big-btn { width: 100%; padding: 18px; border-radius: 15px; border: none; font-size: 1.15rem; font-weight: 800; cursor: pointer; margin-top: 10px; transition: opacity 0.2s; }
+        .big-btn:active { opacity: 0.8; }
+        .btn-primary { background: var(--accent); color: #fff; }
+        .btn-secondary { background: #1e293b; color: #94a3b8; border: 2px solid #334155; }
+        .btn-add { background: var(--success); color: #fff; }
+        .btn-study { background: #0ea5e9; color: #fff; }
+
+        .opt-btn { background: #1e293b; border: 2px solid transparent; padding: 10px; border-radius: 10px; color: #94a3b8; font-weight: 700; font-size: 0.8rem; width: 100%; transition: 0.2s; }
         .opt-btn.active { border-color: var(--primary); color: #fff; background: rgba(56, 189, 248, 0.1); }
 
+        /* SPILLOMRÅDE */
+        .game-header { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4); }
+        #play-content { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        #word-display { font-size: 2.8rem; font-weight: 800; color: #fff; text-align: center; margin: 10px 0; }
+        #tense-tag { background: var(--primary); color: #000; padding: 4px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
+        #user-input { width: 85%; padding: 10px; font-size: 1.8rem; border: none; border-bottom: 3px solid var(--primary); background: transparent; color: #fff; text-align: center; margin: 15px 0; outline: none; }
+
+        /* TASTATUR */
+        .keyboard { background: rgba(0,0,0,0.7); padding: 10px 8px calc(45px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 6px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .kb-row { display: flex; justify-content: center; gap: 5px; }
+        .key { background: #2d3748; color: #fff; flex: 1; height: 46px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: 700; box-shadow: 0 3px 0 #1a202c; cursor: pointer; }
+        .key:active { transform: translateY(2px); box-shadow: none; background: var(--primary); color: #000; }
+
         .hidden { display: none !important; }
-        .shake { animation: shake 0.3s; }
-        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-8px);} 75% {transform: translateX(8px);} }
+        .wrong-feedback { border-bottom-color: var(--danger) !important; color: var(--danger) !important; }
+        .correct-blink { border-bottom-color: var(--success) !important; color: var(--success) !important; }
     </style>
 </head>
 <body>
 
 <div id="game-container">
     <div id="main-menu">
-        <h1 style="font-size: 2.2rem; margin: 0;">Tidsmaskinen</h1>
-        <p style="color: #64748b; font-size: 0.8rem; margin-bottom: 20px;">150+ Verb • Perfekt Layout</p>
-        <div style="width:100%; text-align:left; font-size:0.7rem; font-weight:800; color:var(--primary); margin-bottom:5px;">FART</div>
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; width:100%; margin-bottom:15px;">
+        <h1 style="margin:0; font-size: 2.4rem;">Tidsmaskinen</h1>
+        <p style="color:#64748b; font-size:0.85rem; margin-bottom:25px;">Din personlige verbtrener</p>
+        
+        <div style="width:100%; text-align:left; font-size:0.7rem; font-weight:800; color:var(--primary); margin-bottom:6px;">FART</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; width:100%; margin-bottom:18px;">
             <button class="opt-btn active" onclick="selectOpt(this, 'speed', 'rolig')">Rolig</button>
             <button class="opt-btn" onclick="selectOpt(this, 'speed', 'medium')">Medium</button>
             <button class="opt-btn" onclick="selectOpt(this, 'speed', 'hektisk')">Hektisk</button>
         </div>
-        <div style="width:100%; text-align:left; font-size:0.7rem; font-weight:800; color:var(--primary); margin-bottom:5px;">TIDSFORM</div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%; margin-bottom:20px;">
+
+        <div style="width:100%; text-align:left; font-size:0.7rem; font-weight:800; color:var(--primary); margin-bottom:6px;">TIDSFORM</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%; margin-bottom:25px;">
             <button class="opt-btn active" onclick="selectOpt(this, 'tense', 'presens')">Presens</button>
             <button class="opt-btn" onclick="selectOpt(this, 'tense', 'preteritum')">Preteritum</button>
             <button class="opt-btn" onclick="selectOpt(this, 'tense', 'perfektum')">Perfektum</button>
             <button class="opt-btn" onclick="selectOpt(this, 'tense', 'skal')">Fremtid</button>
             <button class="opt-btn" onclick="selectOpt(this, 'tense', 'miks')" style="grid-column: span 2;">Miks Alle</button>
         </div>
-        <button class="big-btn btn-primary" onclick="startGame()">START</button>
+
+        <button class="big-btn btn-primary" onclick="startGame()">START SPILLET</button>
+        <button class="big-btn btn-study" onclick="openStudy()">📖 MINE VERB</button>
+        <button class="big-btn btn-add" onclick="openAdd()">➕ LEGG TIL NYTT</button>
+    </div>
+
+    <div id="add-screen" class="hidden">
+        <h2 style="margin-top:0">Nytt verb</h2>
+        <input type="text" id="newInf" class="add-input" placeholder="Infinitiv (f.eks: å se)">
+        <input type="text" id="newPres" class="add-input" placeholder="Presens (ser)">
+        <input type="text" id="newPret" class="add-input" placeholder="Preteritum (så)">
+        <input type="text" id="newPerf" class="add-input" placeholder="Perfektum (sett)">
+        <input type="text" id="newFut" class="add-input" placeholder="Fremtid (skal se)">
+        <button class="big-btn btn-add" onclick="saveNewVerb()">LAGRE</button>
+        <button class="big-btn btn-secondary" onclick="closeAdd()">AVBRYT</button>
+    </div>
+
+    <div id="study-screen" class="hidden">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+            <h2 style="margin:0">Mine verb</h2>
+            <button onclick="closeStudy()" style="background:none; border:none; color:var(--primary); font-weight:800; cursor:pointer;">LUKK</button>
+        </div>
+        <input type="text" id="verbSearch" class="search-box" placeholder="Søk i listen..." onkeyup="filterVerbs()">
+        <div id="study-list-container">
+            <table class="study-table">
+                <thead><tr><th>INFINITIV</th><th>PRESENS</th><th>PRET.</th><th style="width:40px;"></th></tr></thead>
+                <tbody id="verbTableBody"></tbody>
+            </table>
+        </div>
     </div>
 
     <div id="play-header" class="game-header hidden">
-        <div onclick="goToMenu()" style="color: var(--primary); font-weight: 800; cursor:pointer;">AVSLUTT</div>
+        <div onclick="location.reload()" style="color:var(--primary); font-weight:800; cursor:pointer; font-size: 0.8rem;">MENY</div>
         <div class="stats-container">
             <span>LIV: <span id="lives" style="color:#fff">3</span></span>
             <span>POENG: <span id="score" style="color:#fff">0</span></span>
         </div>
     </div>
-
     <div id="play-content" class="hidden">
-        <div id="timer-display" style="font-size: 1.5rem; color: var(--primary); font-weight: 800; height: 2rem;"></div>
-        <div id="word-area">
-            <span id="tense-tag">PRESENS</span>
-            <div id="word-display">Å TA</div>
-            <input type="text" id="user-input" readonly>
-        </div>
+        <div id="timer-display" style="color:var(--primary); font-weight:800; height:1.5rem; font-size: 1.2rem;"></div>
+        <span id="tense-tag"></span>
+        <div id="word-display"></div>
+        <input type="text" id="user-input" readonly>
     </div>
 
     <div id="kb-container" class="keyboard hidden">
-        <div class="kb-row">
-            <div class="key" onclick="press('q')">Q</div><div class="key" onclick="press('w')">W</div><div class="key" onclick="press('e')">E</div><div class="key" onclick="press('r')">R</div><div class="key" onclick="press('t')">T</div><div class="key" onclick="press('y')">Y</div><div class="key" onclick="press('u')">U</div><div class="key" onclick="press('i')">I</div><div class="key" onclick="press('o')">O</div><div class="key" onclick="press('p')">P</div><div class="key" onclick="press('å')">Å</div>
-        </div>
-        <div class="kb-row">
-            <div class="key" onclick="press('a')">A</div><div class="key" onclick="press('s')">S</div><div class="key" onclick="press('d')">D</div><div class="key" onclick="press('f')">F</div><div class="key" onclick="press('g')">G</div><div class="key" onclick="press('h')">H</div><div class="key" onclick="press('j')">J</div><div class="key" onclick="press('k')">K</div><div class="key" onclick="press('l')">L</div><div class="key" onclick="press('ø')">Ø</div><div class="key" onclick="press('æ')">Æ</div>
-        </div>
-        <div class="kb-row">
-            <div class="key" onclick="press('z')">Z</div><div class="key" onclick="press('x')">X</div><div class="key" onclick="press('c')">C</div><div class="key" onclick="press('v')">V</div><div class="key" onclick="press('b')">B</div><div class="key" onclick="press('n')">N</div><div class="key" onclick="press('m')">M</div>
-            <div class="key del" onclick="press('Backspace')">DEL</div>
-            <div class="key enter" onclick="press('Enter')">OK</div>
-        </div>
-        <div class="kb-row">
-            <div class="key space" onclick="press(' ')">MELLOMROM</div>
-        </div>
+        <div class="kb-row"><div class="key" onclick="press('q')">Q</div><div class="key" onclick="press('w')">W</div><div class="key" onclick="press('e')">E</div><div class="key" onclick="press('r')">R</div><div class="key" onclick="press('t')">T</div><div class="key" onclick="press('y')">Y</div><div class="key" onclick="press('u')">U</div><div class="key" onclick="press('i')">I</div><div class="key" onclick="press('o')">O</div><div class="key" onclick="press('p')">P</div><div class="key" onclick="press('å')">Å</div></div>
+        <div class="kb-row"><div class="key" onclick="press('a')">A</div><div class="key" onclick="press('s')">S</div><div class="key" onclick="press('d')">D</div><div class="key" onclick="press('f')">F</div><div class="key" onclick="press('g')">G</div><div class="key" onclick="press('h')">H</div><div class="key" onclick="press('j')">J</div><div class="key" onclick="press('k')">K</div><div class="key" onclick="press('l')">L</div><div class="key" onclick="press('ø')">Ø</div><div class="key" onclick="press('æ')">Æ</div></div>
+        <div class="kb-row"><div class="key" onclick="press('z')">Z</div><div class="key" onclick="press('x')">X</div><div class="key" onclick="press('c')">C</div><div class="key" onclick="press('v')">V</div><div class="key" onclick="press('b')">B</div><div class="key" onclick="press('n')">N</div><div class="key" onclick="press('m')">M</div><div class="key" style="background:#4a5568;" onclick="press('Backspace')">⌫</div><div class="key" style="background:var(--accent);" onclick="press('Enter')">OK</div></div>
+        <div class="kb-row"><div class="key" style="flex:4; background:#334155; font-size: 0.8rem;" onclick="press(' ')">MELLOMROM</div></div>
     </div>
 
     <div id="modal-overlay" class="hidden">
-        <h2 style="font-size: 2.2rem; margin-bottom: 0;">Ferdig!</h2>
-        <div style="font-size: 5rem; font-weight: 800; color:var(--primary);" id="final-score">0</div>
-        <button class="big-btn btn-primary" onclick="startGame()">Spill igjen</button>
-        <button class="big-btn btn-secondary" onclick="goToMenu()">Hovedmeny</button>
+        <h2 style="margin-bottom:0">Spillet er slutt</h2>
+        <div id="final-score" style="font-size:5rem; color:var(--primary); font-weight:800; line-height: 1;">0</div>
+        <p style="color: #64748b; margin-bottom: 20px;">poeng oppnådd</p>
+        <button class="big-btn btn-primary" onclick="startGame()">SPILL IGJEN</button>
+        <button class="big-btn btn-secondary" onclick="location.reload()">TIL MENYEN</button>
     </div>
 </div>
 
 <script>
-    const VERBS = [
+    const defaultVerbs = [
         {inf:'å ta', presens:'tar', preteritum:'tok', perfektum:'tatt', skal:'skal ta'},
         {inf:'å se', presens:'ser', preteritum:'så', perfektum:'sett', skal:'skal se'},
         {inf:'å gå', presens:'går', preteritum:'gikk', perfektum:'gått', skal:'skal gå'},
-        {inf:'å vite', presens:'vet', preteritum:'visste', perfektum:'visst', skal:'skal vite'},
-        {inf:'å være', presens:'er', preteritum:'var', perfektum:'vært', skal:'skal være'},
-        {inf:'å ha', presens:'har', preteritum:'hadde', perfektum:'hatt', skal:'skal ha'},
-        {inf:'å gjøre', presens:'gjør', preteritum:'gjorde', perfektum:'gjort', skal:'skal gjøre'},
-        {inf:'å si', presens:'sier', preteritum:'sa', perfektum:'sagt', skal:'skal si'},
-        {inf:'å få', presens:'får', preteritum:'fikk', perfektum:'fått', skal:'skal få'},
-        {inf:'å kunne', presens:'kan', preteritum:'kunne', perfektum:'kunnet', skal:'skal kunne'},
-        {inf:'å ville', presens:'vil', preteritum:'ville', perfektum:'villet', skal:'skal ville'},
-        {inf:'å skulle', presens:'skal', preteritum:'skulle', perfektum:'skullet', skal:'skal skulle'},
-        {inf:'å tro', presens:'tror', preteritum:'trodde', perfektum:'trodd', skal:'skal tro'},
-        {inf:'å komme', presens:'kommer', preteritum:'kom', perfektum:'kommet', skal:'skal komme'},
-        {inf:'å finne', presens:'finner', preteritum:'fant', perfektum:'funnet', skal:'skal finne'},
-        {inf:'å bruke', presens:'bruker', preteritum:'brukte', perfektum:'brukt', skal:'skal bruke'},
-        {inf:'å bli', presens:'blir', preteritum:'ble', perfektum:'blitt', skal:'skal bli'},
-        {inf:'å spørre', presens:'spør', preteritum:'spurte', perfektum:'spurt', skal:'skal spørre'},
-        {inf:'å skrive', presens:'skriver', preteritum:'skrev', perfektum:'skrevet', skal:'skal skrive'},
-        {inf:'å hjelpe', presens:'hjelper', preteritum:'hjalp', perfektum:'hjulpet', skal:'skal hjelpe'},
-        {inf:'å sitte', presens:'sitter', preteritum:'satt', perfektum:'sittet', skal:'skal sitte'},
-        {inf:'å stå', presens:'står', preteritum:'stod', perfektum:'stått', skal:'skal stå'},
-        {inf:'å ligge', presens:'ligger', preteritum:'lå', perfektum:'ligget', skal:'skal ligge'},
-        {inf:'å legge', presens:'legger', preteritum:'la', perfektum:'lagt', skal:'skal legge'},
-        {inf:'å tenke', presens:'tenker', preteritum:'tenkte', perfektum:'tenkt', skal:'skal tenke'},
-        {inf:'å bo', presens:'bor', preteritum:'bodde', perfektum:'bodd', skal:'skal bo'},
-        {inf:'å snakke', presens:'snakker', preteritum:'snakket', perfektum:'snakket', skal:'skal snakke'},
-        {inf:'å høre', presens:'hører', preteritum:'hørte', perfektum:'hørt', skal:'skal høre'},
-        {inf:'å møte', presens:'møter', preteritum:'møtte', perfektum:'møtt', skal:'skal møte'},
-        {inf:'å reise', presens:'reiser', preteritum:'reiste', perfektum:'reist', skal:'skal reise'},
-        {inf:'å kjøpe', presens:'kjøper', preteritum:'kjøpte', perfektum:'kjøpt', skal:'skal kjøpe'},
-        {inf:'å selge', presens:'selger', preteritum:'solgte', perfektum:'solgt', skal:'skal selge'},
-        {inf:'å løpe', presens:'løper', preteritum:'løp', perfektum:'løpt', skal:'skal løpe'},
-        {inf:'å hoppe', presens:'hopper', preteritum:'hoppet', perfektum:'hoppet', skal:'skal hoppe'},
-        {inf:'å svømme', presens:'svømmer', preteritum:'svømte', perfektum:'svømt', skal:'skal svømme'},
-        {inf:'å synge', presens:'synger', preteritum:'sang', perfektum:'sunget', skal:'skal synge'},
-        {inf:'å lese', presens:'leser', preteritum:'leste', perfektum:'lest', skal:'skal lese'},
-        {inf:'å le', presens:'ler', preteritum:'lo', perfektum:'ledd', skal:'skal le'},
-        {inf:'å gråte', presens:'gråter', preteritum:'gråt', perfektum:'grått', skal:'skal gråte'},
-        {inf:'å sove', presens:'sover', preteritum:'sov', perfektum:'sovet', skal:'skal sove'},
-        {inf:'å bære', presens:'bærer', preteritum:'bar', perfektum:'båret', skal:'skal bære'},
-        {inf:'å dra', presens:'drar', preteritum:'drog', perfektum:'dratt', skal:'skal dra'},
-        {inf:'å drikke', presens:'drikker', preteritum:'drakk', perfektum:'drukket', skal:'skal drikke'},
-        {inf:'å falle', presens:'faller', preteritum:'falt', perfektum:'falt', skal:'skal falle'},
-        {inf:'å fly', presens:'flyr', preteritum:'fløy', perfektum:'flydd', skal:'skal fly'},
-        {inf:'å fryse', presens:'fryser', preteritum:'frøs', perfektum:'frosset', skal:'skal fryse'},
-        {inf:'å gi', presens:'gir', preteritum:'gav', perfektum:'gitt', skal:'skal gi'},
-        {inf:'å gjelde', presens:'gjelder', preteritum:'gjaldt', perfektum:'gjeldt', skal:'skal gjelde'},
-        {inf:'å hete', presens:'heter', preteritum:'het', perfektum:'hett', skal:'skal hete'},
-        {inf:'å knekke', presens:'knekker', preteritum:'knakk', perfektum:'knekt', skal:'skal knekke'},
-        {inf:'å krype', presens:'kryper', preteritum:'krøp', perfektum:'krøpet', skal:'skal krype'},
-        {inf:'å la', presens:'lar', preteritum:'lot', perfektum:'latt', skal:'skal la'},
-        {inf:'å lyve', presens:'lyver', preteritum:'løy', perfektum:'løyet', skal:'skal lyve'},
-        {inf:'å nyte', presens:'nyter', preteritum:'nøt', perfektum:'nytt', skal:'skal nyte'},
-        {inf:'å ri', presens:'rir', preteritum:'red', perfektum:'ridd', skal:'skal ri'},
-        {inf:'å rive', presens:'river', preteritum:'rev', perfektum:'revet', skal:'skal rive'},
-        {inf:'å skjære', presens:'skjærer', preteritum:'skar', perfektum:'skåret', skal:'skal skjære'},
-        {inf:'å skyte', presens:'skyter', preteritum:'skjøt', perfektum:'skutt', skal:'skal skyte'},
-        {inf:'å skyve', presens:'skyver', preteritum:'skjøv', perfektum:'skjøvet', skal:'skal skyve'},
-        {inf:'å slippe', presens:'slipper', preteritum:'slapp', perfektum:'sluppet', skal:'skal slippe'},
-        {inf:'å slite', presens:'sliter', preteritum:'slet', perfektum:'slitt', skal:'skal slite'},
-        {inf:'å slå', presens:'slår', preteritum:'slo', perfektum:'slått', skal:'skal slå'},
-        {inf:'å springe', presens:'springer', preteritum:'sprang', perfektum:'sprunget', skal:'skal springe'},
-        {inf:'å stige', presens:'stiger', preteritum:'steg', perfektum:'steget', skal:'skal stige'},
-        {inf:'å stikke', presens:'stikker', preteritum:'stakk', perfektum:'stikket', skal:'skal stikke'},
-        {inf:'å stjele', presens:'stjeler', preteritum:'stjal', perfektum:'stjålet', skal:'skal stjele'},
-        {inf:'å stryke', presens:'stryker', preteritum:'strøk', perfektum:'strøket', skal:'skal stryke'},
-        {inf:'å velge', presens:'velger', preteritum:'valgte', perfektum:'valgt', skal:'skal velge'},
-        {inf:'å vokse', presens:'vokser', preteritum:'vokste', perfektum:'vokst', skal:'skal vokse'}
+        {inf:'å være', presens:'er', preteritum:'var', perfektum:'vært', skal:'skal være'}
     ];
 
+    let VERBS = [];
     let score = 0, lives = 3, selectedSpeed = 'rolig', selectedTense = 'presens', currentTask = {}, timer, timeLeft, isPausing = false;
-    const inputField = document.getElementById('user-input');
+
+    function initVerbs() {
+        const saved = localStorage.getItem('myVerbs');
+        VERBS = saved ? JSON.parse(saved) : [...defaultVerbs];
+        if (!saved) localStorage.setItem('myVerbs', JSON.stringify(VERBS));
+    }
+
+    function saveNewVerb() {
+        const getVal = id => document.getElementById(id).value.trim().toLowerCase();
+        const v = { inf: getVal('newInf'), presens: getVal('newPres'), preteritum: getVal('newPret'), perfektum: getVal('newPerf'), skal: getVal('newFut') };
+        if (!v.inf || !v.presens || !v.preteritum || !v.perfektum || !v.skal) return;
+        VERBS.push(v);
+        localStorage.setItem('myVerbs', JSON.stringify(VERBS));
+        ['newInf','newPres','newPret','newPerf','newFut'].forEach(id => document.getElementById(id).value = '');
+        closeAdd();
+    }
+
+    function deleteVerb(index) {
+        if(confirm("Slette verbet?")) {
+            VERBS.splice(index, 1);
+            localStorage.setItem('myVerbs', JSON.stringify(VERBS));
+            openStudy();
+        }
+    }
+
+    function openAdd() { document.getElementById('add-screen').classList.remove('hidden'); }
+    function closeAdd() { document.getElementById('add-screen').classList.add('hidden'); }
+    function openStudy() { 
+        const tbody = document.getElementById('verbTableBody');
+        tbody.innerHTML = VERBS.map((v, i) => `
+            <tr>
+                <td style="font-weight:700; color:white">${v.inf}</td>
+                <td>${v.presens}</td>
+                <td>${v.preteritum}</td>
+                <td><button class="delete-btn" onclick="deleteVerb(${i})">✕</button></td>
+            </tr>
+        `).join('');
+        document.getElementById('study-screen').classList.remove('hidden'); 
+    }
+    function closeStudy() { document.getElementById('study-screen').classList.add('hidden'); }
 
     function selectOpt(btn, type, val) {
         btn.parentNode.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
@@ -250,56 +244,38 @@
 
     function press(key) {
         if (isPausing) return;
-        if (key === 'Backspace') {
-            inputField.value = inputField.value.slice(0, -1);
-        } else if (key === 'Enter') {
-            checkAnswer();
-        } else {
-            if (inputField.value.length < 25) inputField.value += key;
-        }
+        const input = document.getElementById('user-input');
+        if (key === 'Backspace') input.value = input.value.slice(0, -1);
+        else if (key === 'Enter') checkAnswer();
+        else if (input.value.length < 25) input.value += key;
     }
 
     function checkAnswer() {
-        if (!inputField.value || isPausing) return;
+        const input = document.getElementById('user-input');
+        if (!input.value || isPausing) return;
         clearInterval(timer);
-        
-        const val = inputField.value.toLowerCase().trim();
+        const val = input.value.toLowerCase().trim();
         if (val === currentTask.ans) {
             score++; updateStats();
-            inputField.classList.add('correct-blink');
+            input.classList.add('correct-blink');
             isPausing = true;
-            setTimeout(() => {
-                isPausing = false;
-                nextRound();
-            }, 200);
+            setTimeout(() => { isPausing = false; nextRound(); }, 200);
         } else {
             lives--; updateStats();
             isPausing = true;
-            document.getElementById('word-area').classList.add('shake');
-            inputField.classList.add('wrong-feedback');
-            inputField.value = currentTask.ans.toUpperCase();
-            
+            input.classList.add('wrong-feedback');
+            input.value = currentTask.ans.toUpperCase();
             setTimeout(() => {
-                document.getElementById('word-area').classList.remove('shake');
-                inputField.classList.remove('wrong-feedback');
+                input.classList.remove('wrong-feedback');
                 if (lives <= 0) endGame();
                 else { isPausing = false; nextRound(); }
             }, 800);
         }
     }
 
-    function goToMenu() {
-        clearInterval(timer);
-        isPausing = false;
-        document.getElementById('main-menu').classList.remove('hidden');
-        document.getElementById('modal-overlay').classList.add('hidden');
-        document.getElementById('play-header').classList.add('hidden');
-        document.getElementById('play-content').classList.add('hidden');
-        document.getElementById('kb-container').classList.add('hidden');
-    }
-
     function startGame() {
-        score = 0; lives = 3; isPausing = false;
+        if (VERBS.length === 0) return alert("Legg til verb først!");
+        score = 0; lives = 3;
         document.getElementById('main-menu').classList.add('hidden');
         document.getElementById('modal-overlay').classList.add('hidden');
         document.getElementById('play-header').classList.remove('hidden');
@@ -315,8 +291,8 @@
         currentTask = { inf: verb.inf, ans: verb[tense], tenseName: tense.toUpperCase() };
         document.getElementById('word-display').innerText = currentTask.inf.toUpperCase();
         document.getElementById('tense-tag').innerText = (currentTask.tenseName === 'SKAL') ? 'FREMTID' : currentTask.tenseName;
-        inputField.value = '';
-        inputField.classList.remove('correct-blink', 'wrong-feedback');
+        document.getElementById('user-input').value = '';
+        document.getElementById('user-input').classList.remove('correct-blink');
         if (selectedSpeed !== 'rolig') startTimer();
     }
 
@@ -336,12 +312,19 @@
     }
 
     function endGame() {
-        clearInterval(timer);
         document.getElementById('final-score').innerText = score;
         document.getElementById('play-content').classList.add('hidden');
         document.getElementById('kb-container').classList.add('hidden');
         document.getElementById('modal-overlay').classList.remove('hidden');
     }
+
+    function filterVerbs() {
+        const q = document.getElementById('verbSearch').value.toLowerCase();
+        const rows = document.getElementById('verbTableBody').getElementsByTagName('tr');
+        for (let r of rows) r.style.display = r.innerText.toLowerCase().includes(q) ? '' : 'none';
+    }
+
+    initVerbs();
 </script>
 </body>
 </html>
