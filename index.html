@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tidsmaskinen Pro</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --glass: rgba(255, 255, 255, 0.95);
+            --primary: #6c5ce7;
+            --accent: #a29bfe;
+            --success: #00b894;
+            --danger: #ff7675;
+            --text: #2d3436;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: var(--text);
+        }
+
+        #game-container {
+            background: var(--glass);
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 480px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Tilbake-pil */
+        .back-arrow {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--primary);
+            transition: transform 0.2s;
+            z-index: 10;
+        }
+        .back-arrow:hover { transform: scale(1.2); }
+
+        h1 { font-weight: 800; letter-spacing: -1px; margin-bottom: 0.5rem; color: var(--primary); }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            margin: 1rem 0;
+            font-weight: 600;
+            color: #636e72;
+        }
+
+        #timer {
+            font-size: 3rem;
+            font-weight: 900;
+            margin: 0.5rem 0;
+            background: linear-gradient(to bottom, #2d3436, #636e72);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        #verb-display {
+            font-size: 3.2rem;
+            font-weight: 900;
+            margin: 0.2rem 0;
+            letter-spacing: -2px;
+        }
+
+        #tense-instruction {
+            background: var(--accent);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+        }
+
+        input {
+            width: 100%;
+            padding: 18px;
+            font-size: 1.5rem;
+            border: 2px solid #dfe6e9;
+            border-radius: 16px;
+            text-align: center;
+            box-sizing: border-box;
+            background: #fdfdfd;
+        }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 1rem 0; }
+
+        button {
+            padding: 14px;
+            border: none;
+            border-radius: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-mode { background: #f1f2f6; color: #747d8c; }
+        .btn-mode.selected { background: var(--primary); color: white; }
+        .btn-start { background: var(--success); width: 100%; font-size: 1.2rem; color: white; margin-top: 1rem; }
+
+        /* Modal / Game Over Box */
+        #modal-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            padding: 2rem;
+            width: 80%;
+        }
+
+        .modal-content h2 { font-size: 2rem; color: var(--danger); margin-bottom: 0.5rem; }
+        .modal-score { font-size: 1.2rem; font-weight: bold; margin-bottom: 1.5rem; }
+
+        .hidden { display: none !important; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .timer-low { animation: pulse 0.5s infinite; -webkit-text-fill-color: var(--danger) !important; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div id="setup-screen">
+        <h1>Tidsmaskinen</h1>
+        <p style="color: #636e72;">Mestre de norske verbene</p>
+        
+        <p style="text-align: left; font-size: 0.8rem; font-weight: 800; color: #b2bec3;">1. VELG TID</p>
+        <div class="grid" id="tense-select">
+            <button class="btn-mode selected" onclick="setTense('presens', this)">Presens</button>
+            <button class="btn-mode" onclick="setTense('preteritum', this)">Preteritum</button>
+            <button class="btn-mode" onclick="setTense('perfektum', this)">Perfektum</button>
+            <button class="btn-mode" onclick="setTense('mixed', this)">Mixed</button>
+        </div>
+
+        <p style="text-align: left; font-size: 0.8rem; font-weight: 800; color: #b2bec3; margin-top: 1.5rem;">2. VELG TEMPO</p>
+        <div class="grid" id="tempo-select">
+            <button class="btn-mode" onclick="setTempo('calm', this)">Rolig</button>
+            <button class="btn-mode selected" onclick="setTempo('medium', this)">Medium</button>
+            <button class="btn-mode" onclick="setTempo('hectic', this)">Hektisk</button>
+        </div>
+
+        <button class="btn-start" onclick="startGame()">Begynn reisen</button>
+    </div>
+
+    <div id="play-screen" class="hidden">
+        <div class="back-arrow" onclick="goBack()">←</div>
+        <div class="stats-bar">
+            <span id="lives-display">❤️ <span id="lives">3</span></span>
+            <span>🏆 <span id="score">0</span></span>
+        </div>
+        <div id="timer">20s</div>
+        <div id="tense-instruction">Preteritum</div>
+        <div id="verb-display">Å TA</div>
+        <input type="text" id="user-input" autocomplete="off" placeholder="Skriv svaret...">
+    </div>
+
+    <div id="modal-overlay" class="hidden">
+        <div class="modal-content">
+            <h2>Game Over!</h2>
+            <p id="modal-msg" style="color: #636e72; margin-bottom: 5px;"></p>
+            <p class="modal-score">Din score: <span id="final-score">0</span></p>
+            <button class="btn-start" onclick="startGame()">Prøv igjen</button>
+            <button class="btn-mode" style="width: 100%; margin-top: 10px; padding: 15px;" onclick="goBack()">Hovedmeny</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Inkluder hele verb-listen din her
+    const VERBS = [
+        {inf:'å ta', presens:'tar', preteritum:'tok', perfektum:'tatt'},
+        {inf:'å gå', presens:'går', preteritum:'gikk', perfektum:'gått'},
+        {inf:'å se', presens:'ser', preteritum:'så', perfektum:'sett'},
+        {inf:'å være', presens:'er', preteritum:'var', perfektum:'vært'},
+        {inf:'å ha', presens:'har', preteritum:'hadde', perfektum:'hatt'},
+        {inf:'å gjøre', presens:'gjør', preteritum:'gjorde', perfektum:'gjort'},
+        {inf:'å si', presens:'sier', preteritum:'sa', perfektum:'sagt'},
+        {inf:'å skrive', presens:'skriver', preteritum:'skrev', perfektum:'skrevet'},
+        {inf:'å spise', presens:'spiser', preteritum:'spiste', perfektum:'spist'},
+        {inf:'å drikke', presens:'drikker', preteritum:'drakk', perfektum:'drukket'}
+        // ... legg til de 100 verbene her
+    ];
+
+    let score = 0, lives = 3, timeLeft = 20, timerInterval;
+    let selectedTense = 'presens', selectedTempo = 'medium';
+    let currentTask = {};
+
+    function setTense(t, btn) {
+        selectedTense = t;
+        document.querySelectorAll('#tense-select button').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+    }
+
+    function setTempo(t, btn) {
+        selectedTempo = t;
+        document.querySelectorAll('#tempo-select button').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+    }
+
+    function goBack() {
+        clearInterval(timerInterval);
+        document.getElementById('play-screen').classList.add('hidden');
+        document.getElementById('modal-overlay').classList.add('hidden');
+        document.getElementById('setup-screen').classList.remove('hidden');
+    }
+
+    function startGame() {
+        document.getElementById('setup-screen').classList.add('hidden');
+        document.getElementById('modal-overlay').classList.add('hidden');
+        document.getElementById('play-screen').classList.remove('hidden');
+        score = 0; lives = 3;
+        document.getElementById('score').innerText = score;
+        
+        if (selectedTempo === 'calm') {
+            document.getElementById('lives-display').style.opacity = '0';
+            document.getElementById('timer').innerText = "∞";
+        } else {
+            document.getElementById('lives-display').style.opacity = '1';
+            document.getElementById('lives').innerText = lives;
+        }
+        nextRound();
+    }
+
+    function nextRound() {
+        const verb = VERBS[Math.floor(Math.random() * VERBS.length)];
+        const tenses = ['presens', 'preteritum', 'perfektum'];
+        const tenseToAsk = (selectedTense === 'mixed') ? tenses[Math.floor(Math.random()*3)] : selectedTense;
+        
+        currentTask = { verb: verb.inf, answer: verb[tenseToAsk], tenseName: tenseToAsk.toUpperCase() };
+        
+        document.getElementById('verb-display').innerText = currentTask.verb;
+        document.getElementById('tense-instruction').innerText = currentTask.tenseName;
+        document.getElementById('user-input').value = '';
+        document.getElementById('user-input').focus();
+
+        clearInterval(timerInterval);
+        if (selectedTempo !== 'calm') {
+            timeLeft = (selectedTempo === 'medium') ? 20 : 10;
+            startTimer();
+        }
+    }
+
+    function startTimer() {
+        updateTimerUI();
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerUI();
+            if (timeLeft <= 0) handleWrong("Tiden rant ut!");
+        }, 1000);
+    }
+
+    function updateTimerUI() {
+        const timerEl = document.getElementById('timer');
+        timerEl.innerText = timeLeft + "s";
+        if (timeLeft <= 5) timerEl.classList.add('timer-low');
+        else timerEl.classList.remove('timer-low');
+    }
+
+    document.getElementById('user-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const val = e.target.value.toLowerCase().trim();
+            if (val === currentTask.answer) {
+                score++;
+                document.getElementById('score').innerText = score;
+                nextRound();
+            } else {
+                handleWrong(`Feil! Det var: ${currentTask.answer.toUpperCase()}`);
+            }
+        }
+    });
+
+    function handleWrong(msg) {
+        clearInterval(timerInterval);
+        if (selectedTempo === 'calm') {
+            nextRound();
+        } else {
+            lives--;
+            document.getElementById('lives').innerText = lives;
+            if (lives <= 0) {
+                showGameOver(msg);
+            } else {
+                nextRound();
+            }
+        }
+    }
+
+    function showGameOver(msg) {
+        document.getElementById('final-score').innerText = score;
+        document.getElementById('modal-msg').innerText = msg;
+        document.getElementById('modal-overlay').classList.remove('hidden');
+    }
+</script>
+</body>
+</html>
