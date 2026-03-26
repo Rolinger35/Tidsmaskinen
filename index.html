@@ -22,96 +22,62 @@
             background-image: radial-gradient(circle at top right, #1e1b4b, #0f172a);
             color: var(--text);
             display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; margin: 0;
+            min-height: 100vh; margin: 0; overflow: hidden;
         }
 
         #game-container {
             background: var(--card);
-            padding: 2.5rem;
+            padding: 2rem;
             border-radius: 40px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            width: 95%; max-width: 480px;
+            width: 95%; max-width: 500px;
             text-align: center;
             position: relative;
             border: 1px solid rgba(255, 255, 255, 0.08);
-            min-height: 520px;
+            min-height: 650px;
             display: flex; flex-direction: column;
         }
 
-        .game-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-            min-height: 40px;
-        }
+        .game-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
+        .back-btn { font-size: 1.8rem; cursor: pointer; color: var(--primary); opacity: 0.7; transition: 0.3s; }
+        .stats-container { display: flex; gap: 20px; font-weight: 700; color: #64748b; font-size: 0.85rem; }
 
-        .back-btn {
-            font-size: 1.8rem; 
-            cursor: pointer; 
-            color: var(--primary);
-            opacity: 0.7; 
-            transition: 0.3s;
-        }
-        .back-btn:hover { opacity: 1; transform: translateX(-5px); }
-
-        .stats-container {
-            display: flex;
-            gap: 20px;
-            font-weight: 700;
-            color: #64748b;
-            font-size: 0.85rem;
-        }
-
-        /* CLEAN SECOND COUNTER */
-        #timer-display {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 5px;
-            height: 2rem;
-            transition: transform 0.1s ease-out;
-        }
-        
-        /* Effekt når tallet endres */
+        #timer-display { font-size: 1.5rem; font-weight: 800; color: var(--primary); height: 2rem; margin-bottom: 5px; }
         .tick { animation: pulse-hit 0.2s ease-out; }
-        @keyframes pulse-hit {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.3); color: #fff; }
-            100% { transform: scale(1); }
-        }
-
+        @keyframes pulse-hit { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
         .low-time { color: var(--danger) !important; }
 
         .menu-title { font-size: 2.4rem; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 0.5rem; background: linear-gradient(to bottom, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .config-section { margin-bottom: 1.5rem; text-align: left; }
-        .section-label { font-size: 0.7rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.8rem; display: block; }
-        .option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .section-label { font-size: 0.7rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.8rem; display: block; text-align: left; }
         
-        .opt-btn {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 12px; border-radius: 16px; color: #94a3b8;
-            cursor: pointer; font-weight: 700; transition: 0.2s;
-        }
+        .option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1.5rem; }
+        .opt-btn { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); padding: 10px; border-radius: 12px; color: #94a3b8; cursor: pointer; font-weight: 700; }
         .opt-btn.active { background: rgba(56, 189, 248, 0.1); border-color: var(--primary); color: #fff; }
 
-        .start-btn {
-            width: 100%; padding: 18px; border-radius: 20px; border: none;
-            background: var(--accent); color: #fff; font-size: 1.1rem; font-weight: 800;
-            cursor: pointer; transition: 0.3s; margin-top: auto;
-        }
-
-        #word-display { font-size: 3.5rem; font-weight: 800; margin: 0.5rem 0; color: #fff; letter-spacing: -2px; }
+        #word-display { font-size: 3rem; font-weight: 800; margin: 0.5rem 0; color: #fff; letter-spacing: -1.5px; }
         #tense-tag { background: var(--primary); color: #000; padding: 4px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 800; }
-        input { width: 100%; padding: 20px; font-size: 1.4rem; border: 2px solid rgba(255,255,255,0.1); border-radius: 20px; background: rgba(0,0,0,0.2); color: #fff; text-align: center; outline: none; box-sizing: border-box; margin-top: 1rem; }
-
-        #modal-overlay { 
-            position: absolute; inset: 0; background: var(--card); 
-            border-radius: 40px; display: flex; flex-direction: column; 
-            justify-content: center; align-items: center; z-index: 100; padding: 2.5rem;
+        
+        #user-input { 
+            width: 100%; padding: 15px; font-size: 1.4rem; border: 2px solid rgba(255,255,255,0.1); 
+            border-radius: 15px; background: rgba(0,0,0,0.2); color: #fff; text-align: center; 
+            margin: 1rem 0; pointer-events: none; /* Skriv kun med virtuelt tastatur */
         }
 
+        /* VIRTUELT TASTATUR */
+        .keyboard { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; margin-top: auto; padding-top: 10px; }
+        .key { 
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
+            color: #fff; padding: 12px 0; border-radius: 8px; cursor: pointer; 
+            font-weight: 700; font-size: 0.9rem; transition: 0.1s; 
+            user-select: none;
+        }
+        .key:active { background: var(--primary); color: #000; transform: scale(0.95); }
+        .key.wide { grid-column: span 2; background: rgba(56, 189, 248, 0.2); }
+        .key.enter { grid-column: span 2; background: var(--accent); }
+
+        .start-btn { width: 100%; padding: 18px; border-radius: 20px; border: none; background: var(--accent); color: #fff; font-size: 1.1rem; font-weight: 800; cursor: pointer; margin-top: auto; }
+
+        #modal-overlay { position: absolute; inset: 0; background: var(--card); border-radius: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; padding: 2.5rem; }
         .hidden { display: none !important; }
         .shake { animation: shake 0.4s; }
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} }
@@ -130,7 +96,6 @@
 
     <div id="main-menu">
         <h1 class="menu-title">Tidsmaskinen</h1>
-        <p style="color: #64748b; margin-bottom: 1.5rem;">Tren på verbformer</p>
         <div class="config-section">
             <span class="section-label">Fart</span>
             <div class="option-grid">
@@ -138,35 +103,39 @@
                 <button class="opt-btn" onclick="selectOpt(this, 'speed', 'medium')">Medium</button>
                 <button class="opt-btn" onclick="selectOpt(this, 'speed', 'hektisk')">Hektisk</button>
             </div>
-        </div>
-        <div class="config-section">
             <span class="section-label">Tidsform</span>
             <div class="option-grid" style="grid-template-columns: 1fr 1fr 1fr;">
                 <button class="opt-btn active" onclick="selectOpt(this, 'tense', 'presens')">Presens</button>
                 <button class="opt-btn" onclick="selectOpt(this, 'tense', 'preteritum')">Preteritum</button>
                 <button class="opt-btn" onclick="selectOpt(this, 'tense', 'perfektum')">Perfektum</button>
                 <button class="opt-btn" onclick="selectOpt(this, 'tense', 'skal')">Fremtid</button>
-                <button class="opt-btn" onclick="selectOpt(this, 'tense', 'miks')" style="grid-column: span 2;">Miks alt</button>
+                <button class="opt-btn" onclick="selectOpt(this, 'tense', 'miks')" style="grid-column: span 2;">Miks</button>
             </div>
         </div>
-        <button class="start-btn" onclick="startGame()">START TRENING</button>
+        <button class="start-btn" onclick="startGame()">START</button>
     </div>
 
     <div id="play-screen" class="hidden">
         <div id="timer-display"></div>
         <div id="tense-tag-container"><span id="tense-tag">PRESENS</span></div>
         <div id="word-display">Å TA</div>
-        <input type="text" id="user-input" placeholder="Skriv bøyning..." autocomplete="off">
+        <input type="text" id="user-input" readonly>
+        
+        <div class="keyboard">
+            <div class="key" onclick="press('q')">Q</div><div class="key" onclick="press('w')">W</div><div class="key" onclick="press('e')">E</div><div class="key" onclick="press('r')">R</div><div class="key" onclick="press('t')">T</div><div class="key" onclick="press('y')">Y</div><div class="key" onclick="press('u')">U</div><div class="key" onclick="press('i')">I</div><div class="key" onclick="press('o')">O</div><div class="key" onclick="press('p')">P</div>
+            <div class="key" onclick="press('a')">A</div><div class="key" onclick="press('s')">S</div><div class="key" onclick="press('d')">D</div><div class="key" onclick="press('f')">F</div><div class="key" onclick="press('g')">G</div><div class="key" onclick="press('h')">H</div><div class="key" onclick="press('j')">J</div><div class="key" onclick="press('k')">K</div><div class="key" onclick="press('l')">L</div><div class="key" onclick="press('å')">Å</div>
+            <div class="key" onclick="press('æ')">Æ</div><div class="key" onclick="press('ø')">Ø</div><div class="key" onclick="press('z')">Z</div><div class="key" onclick="press('x')">X</div><div class="key" onclick="press('c')">C</div><div class="key" onclick="press('v')">V</div><div class="key" onclick="press('b')">B</div><div class="key" onclick="press('n')">N</div><div class="key" onclick="press('m')">M</div><div class="key" onclick="press(' ')">_</div>
+            <div class="key wide" onclick="press('Backspace')">DEL</div>
+            <div class="key wide" style="grid-column: span 6; opacity: 0.5;">Tidsmaskinen Pro</div>
+            <div class="key enter" onclick="press('Enter')">OK</div>
+        </div>
     </div>
 
     <div id="modal-overlay" class="hidden">
-        <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem; font-weight: 800;">Ferdig!</h2>
-        <p id="modal-msg" style="color: #94a3b8; font-size: 0.9rem;"></p>
-        <div style="font-size: 5rem; font-weight: 800; margin: 1rem 0; color: #fff;" id="final-score">0</div>
-        <div style="width: 100%; display: flex; flex-direction: column; gap: 12px; margin-top: 2rem;">
-            <button class="start-btn" style="margin: 0;" onclick="startGame()">Spill igjen</button>
-            <button class="opt-btn" style="padding: 18px; border-radius: 20px;" onclick="showMenu()">Hovedmeny</button>
-        </div>
+        <h2 style="font-size: 2rem; font-weight: 800;">Ferdig!</h2>
+        <div style="font-size: 4rem; font-weight: 800; margin: 1rem 0;" id="final-score">0</div>
+        <button class="start-btn" onclick="startGame()">Spill igjen</button>
+        <button class="opt-btn" style="width:100%; margin-top:10px; padding:15px;" onclick="showMenu()">Meny</button>
     </div>
 </div>
 
@@ -177,18 +146,42 @@
         {inf:'å gå', presens:'går', preteritum:'gikk', perfektum:'gått', skal:'skal gå'},
         {inf:'å spise', presens:'spiser', preteritum:'spiste', perfektum:'spist', skal:'skal spise'},
         {inf:'å vite', presens:'vet', preteritum:'visste', perfektum:'visst', skal:'skal vite'},
-        {inf:'å være', presens:'er', preteritum:'var', perfektum:'vært', skal:'skal være'},
-        {inf:'å bære', presens:'bærer', preteritum:'bar', perfektum:'båret', skal:'skal bære'}
+        {inf:'å være', presens:'er', preteritum:'var', perfektum:'vært', skal:'skal være'}
     ];
 
     let score = 0, lives = 3, selectedSpeed = 'rolig', selectedTense = 'presens', currentTask = {}, timer, timeLeft;
-    const timerDisplay = document.getElementById('timer-display');
+    const inputField = document.getElementById('user-input');
 
     function selectOpt(btn, type, val) {
         btn.parentNode.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        selectedSpeed = (type === 'speed') ? val : selectedSpeed;
-        selectedTense = (type === 'tense') ? val : selectedTense;
+        if(type === 'speed') selectedSpeed = val; else selectedTense = val;
+    }
+
+    function press(key) {
+        if (key === 'Backspace') {
+            inputField.value = inputField.value.slice(0, -1);
+        } else if (key === 'Enter') {
+            checkAnswer();
+        } else {
+            if (inputField.value.length < 20) inputField.value += key;
+        }
+    }
+
+    // Støtt fysisk tastatur også
+    window.addEventListener('keydown', (e) => {
+        if (document.getElementById('play-screen').classList.contains('hidden')) return;
+        if (e.key === 'Backspace' || e.key === 'Enter') press(e.key);
+        else if (e.key.length === 1) press(e.key.toLowerCase());
+    });
+
+    function checkAnswer() {
+        const val = inputField.value.toLowerCase().trim();
+        if (val === currentTask.ans) {
+            score++; updateStats(); nextRound();
+        } else {
+            handleWrong(`Feil! Riktig: ${currentTask.ans.toUpperCase()}`);
+        }
     }
 
     function startGame() {
@@ -197,8 +190,7 @@
         document.getElementById('modal-overlay').classList.add('hidden');
         document.getElementById('play-screen').classList.remove('hidden');
         document.getElementById('play-header').classList.remove('hidden');
-        updateStats();
-        nextRound();
+        updateStats(); nextRound();
     }
 
     function nextRound() {
@@ -206,59 +198,29 @@
         const verb = VERBS[Math.floor(Math.random() * VERBS.length)];
         let tense = selectedTense;
         if (tense === 'miks') tense = ['presens', 'preteritum', 'perfektum', 'skal'][Math.floor(Math.random()*4)];
-        
         currentTask = { inf: verb.inf, ans: verb[tense], tenseName: tense.toUpperCase() };
         document.getElementById('word-display').innerText = currentTask.inf;
         document.getElementById('tense-tag').innerText = currentTask.tenseName === 'SKAL' ? 'FREMTID' : currentTask.tenseName;
-        
-        const input = document.getElementById('user-input');
-        input.value = '';
-        input.focus();
-        
-        if (selectedSpeed !== 'rolig') {
-            startTimer();
-        } else {
-            timerDisplay.innerText = '';
-        }
+        inputField.value = '';
+        if (selectedSpeed !== 'rolig') startTimer();
+        else document.getElementById('timer-display').innerText = '';
     }
 
     function startTimer() {
         timeLeft = (selectedSpeed === 'hektisk') ? 5 : 10;
         updateTimerUI(timeLeft);
-
         timer = setInterval(() => {
-            timeLeft--;
-            updateTimerUI(timeLeft);
-
-            if (timeLeft <= 0) { 
-                clearInterval(timer); 
-                handleWrong(`Tiden gikk ut! Svaret var ${currentTask.ans.toUpperCase()}`); 
-            }
-        }, 1000); // Oppdaterer hvert sekund
+            timeLeft--; updateTimerUI(timeLeft);
+            if (timeLeft <= 0) { clearInterval(timer); handleWrong(`Tiden gikk ut! Svaret var ${currentTask.ans.toUpperCase()}`); }
+        }, 1000);
     }
 
     function updateTimerUI(sec) {
-        timerDisplay.innerText = sec + "s";
-        
-        // Legg til animasjonseffekt
-        timerDisplay.classList.remove('tick');
-        void timerDisplay.offsetWidth; // Trigger reflow
-        timerDisplay.classList.add('tick');
-        
-        if (sec <= 3) {
-            timerDisplay.classList.add('low-time');
-        } else {
-            timerDisplay.classList.remove('low-time');
-        }
+        const td = document.getElementById('timer-display');
+        td.innerText = sec + "s";
+        td.classList.remove('tick'); void td.offsetWidth; td.classList.add('tick');
+        if (sec <= 3) td.classList.add('low-time'); else td.classList.remove('low-time');
     }
-
-    document.getElementById('user-input').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            const val = e.target.value.toLowerCase().trim();
-            if (val === currentTask.ans) { score++; updateStats(); nextRound(); }
-            else { handleWrong(`Feil! Riktig: ${currentTask.ans.toUpperCase()}`); }
-        }
-    });
 
     function handleWrong(msg) {
         lives--; updateStats();
@@ -269,7 +231,6 @@
     }
 
     function showModal(msg) {
-        document.getElementById('modal-msg').innerText = msg;
         document.getElementById('final-score').innerText = score;
         document.getElementById('modal-overlay').classList.remove('hidden');
         document.getElementById('play-header').classList.add('hidden');
